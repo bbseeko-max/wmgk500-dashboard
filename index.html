@@ -32,7 +32,7 @@
   .clock { font-family:var(--mono); font-size:11px; color:var(--muted); }
   .position-banner { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
   .pos-label { font-family:var(--mono); font-size:9px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; }
-  .pos-number { font-family:var(--display); font-size:72px; line-height:1; color:var(--amber); letter-spacing:2px; text-shadow:0 0 60px var(--amber-glow); transition:all 0.5s; }
+  .pos-number { font-family:var(--display); font-size:96px; line-height:1; color:var(--amber); letter-spacing:2px; text-shadow:0 0 60px var(--amber-glow); transition:all 0.5s; }
   .pos-of { font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; }
   .pos-divider { width:1px; height:60px; background:var(--border); }
   .pos-stats { display:flex; gap:24px; }
@@ -154,8 +154,7 @@
 
 <div class="topbar">
   <div>
-    <div class="station-id">102.9 MGK</div>
-    <div class="station-sub">Philadelphia's Classic Rock</div>
+    <img src="https://wmgk.com/uploads/2015/03/wmgk.png" alt="WMGK" style="height:44px;display:block;">
   </div>
   <div class="topbar-center">
     <div class="live-badge"><div class="live-dot"></div>PHILLY 500</div>
@@ -169,25 +168,6 @@
     <div class="pos-label">Current Position</div>
     <div class="pos-number" id="pos-number">—</div>
     <div class="pos-of">of 500</div>
-  </div>
-  <div class="pos-divider"></div>
-  <div class="pos-stats">
-    <div class="pos-stat">
-      <div class="pos-stat-val" id="stat-played">0</div>
-      <div class="pos-stat-label">Songs Played</div>
-    </div>
-    <div class="pos-stat">
-      <div class="pos-stat-val" id="stat-remaining">—</div>
-      <div class="pos-stat-label">Remaining</div>
-    </div>
-    <div class="pos-stat">
-      <div class="pos-stat-val" id="stat-unique">0</div>
-      <div class="pos-stat-label">Artists</div>
-    </div>
-    <div class="pos-stat">
-      <div class="pos-stat-val" id="stat-avg-year">—</div>
-      <div class="pos-stat-label">Avg Year</div>
-    </div>
   </div>
   <div class="pos-right">
     <div class="pos-event">PHILLY 500</div>
@@ -238,9 +218,14 @@
       <div class="section-head">Countdown Stats</div>
       <div class="stat-grid">
         <div class="stat-tile">
-          <div class="stat-label">Songs</div>
+          <div class="stat-label">Played</div>
           <div class="stat-value" id="r-songs">0</div>
           <div class="stat-sub">this session</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Remaining</div>
+          <div class="stat-value" id="r-remaining">—</div>
+          <div class="stat-sub">to count down</div>
         </div>
         <div class="stat-tile">
           <div class="stat-label">Artists</div>
@@ -252,7 +237,7 @@
           <div class="stat-value" id="r-year">—</div>
           <div class="stat-sub">release</div>
         </div>
-        <div class="stat-tile">
+        <div class="stat-tile" style="grid-column:1/-1">
           <div class="stat-label">Top Artist</div>
           <div class="stat-value" style="font-size:13px;padding-top:6px" id="r-top">—</div>
           <div class="stat-sub" id="r-top-plays">—</div>
@@ -375,7 +360,6 @@ async function startSession() {
   sessionStartTime = Date.now();
   document.getElementById('init-overlay').classList.add('hidden');
   document.getElementById('pos-number').textContent = pos;
-  document.getElementById('stat-remaining').textContent = pos;
 }
 
 function updateClock() {
@@ -455,16 +439,13 @@ function renderRecent() {
 function renderStats() {
   const n = songs.length;
   document.getElementById('r-songs').textContent = n;
-  document.getElementById('stat-played').textContent = n;
-  document.getElementById('stat-remaining').textContent = serverPosition !== null ? Math.max(0, serverPosition - 1) : '—';
+  document.getElementById('r-remaining').textContent = serverPosition !== null ? Math.max(0, serverPosition - 1) : '—';
   const unique = new Set(songs.map(s=>s.artist.toLowerCase())).size;
   document.getElementById('r-artists').textContent = unique;
-  document.getElementById('stat-unique').textContent = unique;
   const withYears = songs.filter(s=>s.year);
   if (withYears.length) {
     const avg = Math.round(withYears.reduce((a,s)=>a+s.year,0)/withYears.length);
     document.getElementById('r-year').textContent = avg;
-    document.getElementById('stat-avg-year').textContent = avg;
   }
   const counts = {};
   songs.forEach(s=>{counts[s.artist]=(counts[s.artist]||0)+1;});
