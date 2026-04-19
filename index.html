@@ -211,7 +211,10 @@
         <div>
           <div class="np-song" id="np-song">Waiting for countdown...</div>
           <div class="np-artist" id="np-artist">—</div>
-          <div class="np-meta">Elapsed: <span id="np-elapsed">—</span></div>
+          <div class="np-meta">
+            <div>ALBUM <span id="np-album">—</span></div>
+            <div>ELAPSED <span id="np-elapsed">—</span></div>
+          </div>
         </div>
         <div style="text-align:right">
           <div class="np-year-big" id="np-year">—</div>
@@ -427,6 +430,7 @@ function displayTrack(track) {
   const year = track.year || guessYear(track.song);
   document.getElementById('np-year').textContent = year || '—';
   document.getElementById('np-decade').textContent = year ? decadeOf(year)+'s' : '—';
+  document.getElementById('np-album').textContent = track.album || '—';
   document.getElementById('np-pos-pill').textContent = track.position != null ? `#${track.position}` : '—';
 }
 
@@ -510,8 +514,7 @@ function renderArtists() {
 function renderAll(){renderRecent();renderStats();renderDecades();renderArtists();}
 
 function onNewTrack(track, msgPosition) {
-  if (!sessionStarted) return;
-  const year = guessYear(track.song);
+  const year = track.year || guessYear(track.song);
   const enriched = {...track, year};
 
   clearTimeout(displayTimer);
@@ -605,7 +608,13 @@ function connect() {
         vuActive = false;
       }
     }
-    if (msg.type === 'heartbeat') consecutiveErrors = 0;
+    if (msg.type === 'heartbeat') {
+      consecutiveErrors = 0;
+      if (msg.songs && msg.songs.length > songs.length) {
+        songs = msg.songs.map(s => ({...s, year: s.year || guessYear(s.song)}));
+        renderAll();
+      }
+    }
   };
 
   ws.onerror = () => {
