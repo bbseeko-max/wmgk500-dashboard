@@ -591,6 +591,14 @@ function connect() {
         el.textContent = 'No active session on server';
         el.className = 'init-pos-status';
       }
+      if (msg.songs && msg.songs.length) {
+        songs = msg.songs.map(s => ({...s, year: s.year || guessYear(s.song)}));
+        if (msg.sessionActive) {
+          sessionStarted = true;
+          sessionStartTime = sessionStartTime || Date.now();
+        }
+        renderAll();
+      }
       if (msg.current) {
         displayTrack({...msg.current, year: msg.current.year || guessYear(msg.current.song)});
       }
