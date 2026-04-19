@@ -445,7 +445,7 @@ function renderRecent() {
     item.className = 'recent-item'+(i===0?' new':'');
     const t = new Date(s.fetchedAt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
     item.innerHTML = `
-      <div class="recent-pos">${s.position||'—'}</div>
+      <div class="recent-pos">${s.position != null ? s.position : '—'}</div>
       <div><div class="recent-title">${s.song}</div><div class="recent-artist">${s.artist}</div></div>
       <div class="recent-time">${t}</div>`;
     container.appendChild(item);
@@ -515,10 +515,13 @@ function renderAll(){renderRecent();renderStats();renderDecades();renderArtists(
 
 function onNewTrack(track, msgPosition) {
   const year = track.year || guessYear(track.song);
-  const enriched = {...track, year};
+  const position = track.position != null ? track.position : (msgPosition != null ? msgPosition + 1 : undefined);
+  const enriched = {...track, year, position};
 
   clearTimeout(displayTimer);
   displayTimer = setTimeout(() => {
+    const key = s => `${s.song.toLowerCase()}|||${s.artist.toLowerCase()}`;
+    if (songs.length && key(songs[songs.length - 1]) === key(enriched)) return;
     songs.push(enriched);
     if (msgPosition != null) {
       serverPosition = msgPosition;
