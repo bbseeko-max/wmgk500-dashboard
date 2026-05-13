@@ -1,606 +1,183 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>102.9 MGK — Philly 500</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#0e0e0e;--surface:#161616;--border:#2a2a2a;
-  --amber:#e8a020;--amber-dim:#7a4e08;--amber-glow:rgba(232,160,32,0.10);
-  --red:#e84040;--green:#3ecf6a;--text:#f0ede6;--muted:#7a7670;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--display:'Bebas Neue',sans-serif;
-}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;}
+const http=require('http'),https=require('https'),WebSocket=require('ws'),fs=require('fs'),path=require('path');
+const PORT=process.env.PORT||3000,POLL_INTERVAL=10000,MOUNT='WMGKFMAAC';
+const REDIS_URL=process.env.UPSTASH_REDIS_REST_URL,REDIS_TOKEN=process.env.UPSTASH_REDIS_REST_TOKEN,REDIS_KEY='wmgk-session';
+let track=null,songs=[],pos=null,active=false,paused=false,pollCount=0,errCount=0,lastPoll=null,lastStatus='pending';
 
-/* OVERLAYS */
-.overlay{position:fixed;inset:0;background:rgba(14,14,14,0.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:100;}
-.overlay.hidden{display:none;}
-.ov-title{font-family:var(--display);font-size:48px;color:var(--amber);letter-spacing:4px;}
-.ov-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;}
-.ov-input{font-family:var(--mono);font-size:32px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:10px 20px;width:140px;text-align:center;outline:none;}
-.ov-input:focus{border-color:var(--amber);}
-.ov-btn{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--bg);background:var(--amber);border:none;border-radius:4px;padding:14px 24px;cursor:pointer;text-transform:uppercase;}
-.ov-btn:hover{background:#f0b030;}
-.ov-btn.secondary{background:var(--surface);color:var(--amber);border:1px solid var(--amber-dim);}
-.ov-note{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;}
-.ov-err{font-family:var(--mono);font-size:11px;color:var(--red);letter-spacing:1px;}
+const YEARS={"stairway to heaven":1971,"bohemian rhapsody":1975,"hotel california":1976,"free bird":1973,"born to run":1975,"comfortably numb":1979,"dream on":1973,"back in black":1980,"sweet child o' mine":1987,"purple haze":1967,"layla":1970,"whole lotta love":1969,"black dog":1971,"kashmir":1975,"immigrant song":1970,"rock and roll":1971,"hey jude":1968,"come together":1969,"let it be":1970,"something":1969,"here comes the sun":1969,"yesterday":1965,"a day in the life":1967,"while my guitar gently weeps":1968,"sympathy for the devil":1968,"paint it black":1966,"gimme shelter":1969,"wild horses":1971,"brown sugar":1971,"start me up":1981,"satisfaction":1965,"who are you":1978,"baba o'riley":1971,"won't get fooled again":1971,"behind blue eyes":1971,"pinball wizard":1969,"thunder road":1975,"born in the usa":1984,"dancing in the dark":1984,"the river":1980,"hungry heart":1980,"badlands":1978,"panama":1984,"jump":1984,"hot for teacher":1984,"runnin' with the devil":1978,"right now":1991,"thunderstruck":1990,"you shook me all night long":1980,"highway to hell":1979,"shoot to thrill":1980,"t.n.t.":1975,"let there be rock":1977,"dirty deeds done dirt cheap":1976,"down by the seaside":1975,"once in a lifetime":1980,"smells like teen spirit":1991,"come as you are":1991,"heart-shaped box":1993,"man in the box":1990,"jeremy":1991,"better man":1994,"even flow":1991,"alive":1991,"yellow ledbetter":1992,"under the bridge":1992,"scar tissue":1999,"californication":1999,"carry on wayward son":1976,"dust in the wind":1977,"barracuda":1977,"magic man":1976,"crazy on you":1976,"dreams":1977,"go your own way":1977,"the chain":1977,"gold dust woman":1977,"rhiannon":1975,"landslide":1975,"everywhere":1987,"more than a feeling":1976,"peace of mind":1976,"take it easy":1972,"life in the fast lane":1977,"one of these nights":1975,"lyin' eyes":1975,"desperado":1973,"new kid in town":1976,"reeling in the years":1972,"do it again":1972,"peg":1977,"tom sawyer":1981,"red barchetta":1981,"limelight":1981,"subdivisions":1982,"the spirit of radio":1980,"closer to the heart":1977,"working man":1974,"do you feel like we do":1973,"show me the way":1975,"roxanne":1978,"message in a bottle":1979,"every breath you take":1983,"king of pain":1983,"eye of the tiger":1982,"hold the line":1978,"africa":1982,"rosanna":1982,"r.o.c.k. in the u.s.a.":1985,"pink houses":1983,"small town":1985,"hurts so good":1982,"jack and diane":1982,"night moves":1976,"old time rock and roll":1978,"turn the page":1973,"against the wind":1980,"running on empty":1977,"free fallin'":1989,"i won't back down":1989,"runnin' down a dream":1989,"learning to fly":1991,"breakdown":1976,"american girl":1977,"refugee":1980,"lay down sally":1977,"wonderful tonight":1977,"cocaine":1977,"sunshine of your love":1967,"white room":1968,"tiny dancer":1971,"rocket man":1972,"crocodile rock":1973,"goodbye yellow brick road":1973,"bennie and the jets":1973,"saturday night's alright":1973,"your song":1970,"hold on loosely":1981,"pour some sugar on me":1987,"rock of ages":1983,"photograph":1983,"love bites":1987,"here i go again":1982,"is this love":1987,"heat of the moment":1982,"only time will tell":1982,"don't stop believin'":1981,"anyway you want it":1980,"separate ways":1983,"faithfully":1983,"open arms":1981,"lights":1978,"wheel in the sky":1978,"crazy train":1980,"mr. crowley":1980,"bark at the moon":1983,"mama i'm coming home":1991,"you give love a bad name":1986,"livin' on a prayer":1986,"wanted dead or alive":1986,"bad medicine":1988,"rock you like a hurricane":1984,"no one like you":1982,"dude (looks like a lady)":1987,"love in an elevator":1989,"living on the edge":1993,"cryin'":1993,"crazy":1994,"sweet home alabama":1974,"simple man":1973,"what's your name":1977,"give me three steps":1973,"ramblin' man":1973,"jessica":1973,"whipping post":1969,"la grange":1973,"sharp dressed man":1983,"gimme all your lovin'":1983,"legs":1983,"tush":1975,"the joker":1973,"abracadabra":1982,"fly like an eagle":1976,"take the money and run":1976,"american pie":1971,"baker street":1978,"mainstreet":1976,"hollywood nights":1978,"the long run":1979,"heartache tonight":1979,"magic carpet ride":1968,"born to be wild":1968,"space oddity":1969,"ziggy stardust":1972,"suffragette city":1972,"under pressure":1981,"let's dance":1983,"another one bites the dust":1980,"we will rock you":1977,"we are the champions":1977,"somebody to love":1976,"roundabout":1971,"owner of a lonely heart":1983,"heart of gold":1972,"old man":1972,"a horse with no name":1971,"ventura highway":1972,"sister golden hair":1975,"low rider":1975,"spirit in the sky":1969,"losing my religion":1991,"everybody hurts":1992,"maybe i'm amazed":1970,"live and let die":1973,"band on the run":1973,"listen to the music":1972,"long train running":1973,"take it on the run":1980,"can't fight this feeling":1984,"roll with the changes":1978,"keep on loving you":1980,"summer of '69":1985,"run to you":1984,"cuts like a knife":1983,"i love rock 'n' roll":1981,"bad reputation":1980,"love her madly":1971,"people are strange":1967,"riders on the storm":1971,"break on through":1967,"light my fire":1967,"hello i love you":1968,"(don't fear) the reaper":1976,"burnin' for you":1981,"godzilla":1977,"walk this way":1975,"sweet emotion":1975,"back in the saddle":1976,"beautiful day":2000,"one":1991,"sunday bloody sunday":1983,"with or without you":1987,"where the streets have no name":1987,"i still haven't found":1987,"invisible touch":1986,"in the air tonight":1981,"against all odds":1984,"one more night":1985,"centerfold":1981,"love stinks":1980,"lucky man":1971,"blinded by the light":1976,"new world man":1982,"fly by night":1975,"the trees":1978,"bastille day":1975,"addicted to love":1986,"bad case of loving you":1978,"maggie may":1971,"do ya think i'm sexy":1978,"hot legs":1977,"tonight's the night":1976,"wish you were here":1975,"hey you":1979,"money":1973,"time":1973,"another brick in the wall":1979,"us and them":1973,"breathe":1973,"dogs":1977,"sheep":1977,"have a cigar":1975,"shine on you crazy diamond":1975,"radio ga ga":1984,"killer queen":1974,"she's not there":1964,"time of the season":1968,"a whiter shade of pale":1967,"miss you":1978,"emotional rescue":1980,"beast of burden":1978,"shattered":1978,"happy":1972,"tumbling dice":1972,"it's only rock 'n' roll":1974,"jumping jack flash":1968,"honky tonk women":1969,"you can't always get what you want":1969,"19th nervous breakdown":1966,"ruby tuesday":1967,"heartbreaker":1979,"hells bells":1980,"if you want blood":1978,"touch too much":1979,"whole lotta rosie":1977,"high voltage":1976,"problem child":1976,"jailbreak":1976,"she's got balls":1975,"rock and roll damnation":1978,"sin city":1978,"riff raff":1978,"dog eat dog":1978,"hell ain't a bad place to be":1977,"moneytalks":1990,"are you ready":1990,"the razors edge":1990,"you better you bet":1981,"tangled up in blue":1975,"like a rolling stone":1965,"knockin' on heaven's door":1973,"bad to the bone":1982,"one bourbon one scotch one beer":1977,"juke box hero":1981,"urgent":1981,"dirty white boy":1979,"cold as ice":1977,"waiting for a girl like you":1981,"these dreams":1985,"what about love":1985,"never surrender":1985,"alone":1987,"who will you run to":1987};
 
-/* PAUSE BANNER */
-.pause-banner{background:rgba(232,160,32,0.08);border-bottom:2px solid var(--amber-dim);padding:16px 24px;text-align:center;display:none;}
-.pause-banner.show{display:block;}
-.pause-banner-text{font-family:var(--display);font-size:28px;color:var(--amber);letter-spacing:3px;}
-.pause-banner-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+function guessYear(s){return YEARS[s.toLowerCase().trim()]||null;}
 
-/* TOPBAR */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface);gap:12px;flex-wrap:wrap;}
-.logos{display:flex;align-items:center;gap:12px;}
-.logos img{height:38px;object-fit:contain;}
-.topbar-center{display:flex;gap:16px;align-items:center;}
-.live-badge{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--red);}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(232,64,64,0.5)}50%{opacity:0.7;box-shadow:0 0 0 5px rgba(232,64,64,0)}}
-.ws-badge{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:2px;border:1px solid var(--border);color:var(--muted);}
-.ws-badge.ok{color:var(--green);border-color:var(--green);}
-.ws-badge.err{color:var(--red);border-color:var(--red);}
-.ws-badge.connecting{color:var(--amber);border-color:var(--amber-dim);animation:pulse-a 1s infinite;}
-@keyframes pulse-a{0%,100%{opacity:1}50%{opacity:0.4}}
-.clock{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.op-btn{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:4px 10px;border-radius:2px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;text-transform:uppercase;}
-.op-btn:hover{border-color:var(--amber);color:var(--amber);}
-.op-btn.danger{border-color:var(--amber-dim);color:var(--amber);}
-.op-btn.pause-btn{border-color:var(--red);color:var(--red);}
-.op-btn.resume-btn{border-color:var(--green);color:var(--green);}
-.op-controls{display:none;align-items:center;gap:8px;}
-.op-controls.show{display:flex;}
+console.log(`[REDIS] URL:${REDIS_URL?REDIS_URL.slice(0,40):'undefined'} TOKEN:${REDIS_TOKEN?REDIS_TOKEN.slice(0,8):'undefined'}`);
 
-/* POSITION BANNER */
-.pos-banner{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
-.pos-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
-.pos-number{font-family:var(--display);font-size:96px;line-height:1;color:var(--amber);letter-spacing:2px;text-shadow:0 0 60px var(--amber-glow);transition:all 0.5s;}
-.pos-of{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.pos-divider{width:1px;height:70px;background:var(--border);}
-.pos-stats{display:flex;gap:28px;}
-.pos-stat-val{font-family:var(--display);font-size:30px;color:var(--text);line-height:1;}
-.pos-stat-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
-.pos-right{margin-left:auto;text-align:right;}
-.pos-event{font-family:var(--display);font-size:24px;color:var(--amber);letter-spacing:2px;}
-.pos-event-sub{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
-.pos-session{font-family:var(--mono);font-size:10px;color:var(--amber);margin-top:4px;}
-
-/* MAIN LAYOUT */
-.main{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 200px);}
-.left-col{padding:16px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:16px;}
-.right-col{padding:16px 14px;display:flex;flex-direction:column;gap:16px;background:var(--surface);overflow-y:auto;}
-
-/* NOW PLAYING */
-.np-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.np-label{padding:9px 14px 7px;font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;justify-content:space-between;}
-.np-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse-amber 2s ease-in-out infinite;flex-shrink:0;}
-@keyframes pulse-amber{0%,100%{opacity:1}50%{opacity:0.3}}
-.np-pos-pill{font-family:var(--display);font-size:14px;color:var(--amber-dim);background:rgba(232,160,32,0.08);padding:2px 10px;border-radius:2px;border:1px solid var(--amber-dim);}
-.np-body{padding:16px 14px 10px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;}
-.np-song{font-family:var(--display);font-size:40px;line-height:0.95;letter-spacing:1px;color:var(--text);}
-.np-artist{font-family:var(--sans);font-size:15px;font-weight:400;color:var(--amber);margin-top:8px;}
-.np-meta{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:5px;display:flex;gap:14px;flex-wrap:wrap;}
-.np-meta span{color:var(--text);}
-.np-year-big{font-family:var(--display);font-size:56px;line-height:1;color:var(--amber-dim);letter-spacing:2px;text-shadow:0 0 30px var(--amber-glow);}
-.np-decade{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-align:right;margin-top:2px;}
-.vu-row{padding:0 14px 12px;display:flex;gap:2px;align-items:flex-end;height:28px;}
-.vu-bar{width:5px;border-radius:1px;background:var(--amber);transition:height 0.1s ease;}
-
-/* COMMERCIAL */
-.comm-banner{background:rgba(232,160,32,0.06);border:1px solid var(--amber-dim);border-radius:4px;padding:14px 18px;text-align:center;display:none;}
-.comm-banner.show{display:block;}
-.comm-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--amber);text-transform:uppercase;}
-.comm-sub{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:4px;}
-
-/* SECTION */
-.section-head{font-family:var(--mono);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;}
-.section-count{color:var(--amber);}
-
-/* RECENT */
-.recent-list{display:flex;flex-direction:column;gap:1px;max-height:340px;overflow-y:auto;}
-.recent-list::-webkit-scrollbar{width:3px;}
-.recent-list::-webkit-scrollbar-thumb{background:var(--border);}
-.recent-item{display:grid;grid-template-columns:40px 1fr auto;gap:8px;align-items:center;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:2px;}
-.recent-item.new{animation:flashin 1.5s ease;}
-@keyframes flashin{0%{background:rgba(232,160,32,0.12);border-color:var(--amber-dim)}100%{background:var(--surface);border-color:var(--border)}}
-.recent-pos{font-family:var(--display);font-size:17px;color:var(--amber-dim);text-align:center;}
-.recent-title{font-family:var(--sans);font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.recent-artist{font-family:var(--sans);font-size:10px;color:var(--muted);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.recent-time{font-family:var(--mono);font-size:9px;color:var(--muted);text-align:right;flex-shrink:0;}
-.empty-state{font-family:var(--mono);font-size:10px;color:var(--muted);padding:16px 0;text-align:center;letter-spacing:1px;}
-
-/* RIGHT PANEL */
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.stat-tile{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:9px 10px;}
-.stat-label{font-family:var(--mono);font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
-.stat-value{font-family:var(--display);font-size:28px;line-height:1;color:var(--text);}
-.stat-sub{font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.divider{border:none;border-top:1px solid var(--border);}
-.decade-chart{display:flex;flex-direction:column;gap:7px;}
-.decade-row{display:grid;grid-template-columns:42px 1fr 28px;gap:6px;align-items:center;}
-.decade-label{font-family:var(--mono);font-size:9px;color:var(--muted);}
-.decade-track{height:7px;background:var(--border);border-radius:1px;overflow:hidden;}
-.decade-fill{height:100%;border-radius:1px;background:var(--amber);transition:width 0.8s cubic-bezier(0.22,1,0.36,1);}
-.decade-count{font-family:var(--mono);font-size:9px;color:var(--muted);text-align:right;}
-.artist-list{display:flex;flex-direction:column;gap:3px;}
-.artist-row{display:grid;grid-template-columns:18px 1fr auto;gap:6px;align-items:center;padding:5px 6px;border-radius:2px;}
-.artist-row:hover{background:var(--bg);}
-.artist-rank{font-family:var(--mono);font-size:8px;color:var(--amber-dim);text-align:center;}
-.artist-name{font-family:var(--sans);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.artist-plays{font-family:var(--mono);font-size:9px;color:var(--muted);padding:1px 5px;background:var(--border);border-radius:8px;flex-shrink:0;}
-</style>
-</head>
-<body>
-
-<!-- PIN OVERLAY -->
-<div class="overlay" id="pin-overlay">
-  <div class="ov-title">PHILLY 500</div>
-  <div class="ov-sub">102.9 MGK — OPERATOR ACCESS</div>
-  <input class="ov-input" type="password" id="pin-input" placeholder="PIN" maxlength="4" onkeydown="if(event.key==='Enter')checkPin()">
-  <div class="ov-err" id="pin-err" style="display:none">Incorrect PIN</div>
-  <button class="ov-btn" onclick="checkPin()">ENTER</button>
-  <button class="ov-btn secondary" onclick="skipPin()">VIEW ONLY</button>
-  <div class="ov-note">Operators: enter PIN to access controls · Guests: view only</div>
-</div>
-
-<!-- START SESSION OVERLAY -->
-<div class="overlay hidden" id="start-overlay">
-  <div class="ov-title">START SESSION</div>
-  <div class="ov-sub">SET STARTING POSITION</div>
-  <input class="ov-input" type="number" id="start-pos" value="500" min="1" max="500">
-  <button class="ov-btn" onclick="startSession()">BEGIN COUNTDOWN</button>
-  <button class="ov-btn secondary" onclick="resumeFromServer()">RESUME EXISTING SESSION</button>
-  <div class="ov-note">Set 500 at countdown start · or enter current position if rejoining</div>
-</div>
-
-<!-- PAUSE BANNER -->
-<div class="pause-banner" id="pause-banner">
-  <div class="pause-banner-text">⏸ COUNTDOWN PAUSED</div>
-  <div class="pause-banner-sub">Resuming tomorrow — all metrics preserved</div>
-</div>
-
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="logos">
-    <img src="https://wmgk.com/uploads/2015/03/wmgk.png" alt="102.9 MGK" onerror="this.style.display='none'">
-    <img src="https://wmgk.com/uploads/2023/05/Philly-500-1200-%C3%97-630-px.jpg" alt="Philly 500" onerror="this.style.display='none'">
-  </div>
-  <div class="topbar-center">
-    <div class="live-badge"><div class="live-dot"></div>PHILLY 500</div>
-    <div class="ws-badge connecting" id="ws-badge">CONNECTING</div>
-    <!-- Operator controls — hidden until PIN entered -->
-    <div class="op-controls" id="op-controls">
-      <button class="op-btn" id="btn-start" onclick="showStartOverlay()">SET POSITION</button>
-      <button class="op-btn pause-btn" id="btn-pause" onclick="doPause()">⏸ PAUSE</button>
-      <button class="op-btn resume-btn" id="btn-resume" onclick="doResume()" style="display:none">▶ RESUME</button>
-      <button class="op-btn" onclick="doAdjust(1)">+1</button>
-      <button class="op-btn" onclick="doAdjust(-1)">-1</button>
-    </div>
-  </div>
-  <div class="clock" id="clock">--:-- --</div>
-</div>
-
-<!-- POSITION BANNER -->
-<div class="pos-banner">
-  <div>
-    <div class="pos-label">Current Position</div>
-    <div class="pos-number" id="pos-number">—</div>
-    <div class="pos-of">of 500</div>
-  </div>
-  <div class="pos-divider"></div>
-  <div class="pos-stats">
-    <div>
-      <div class="pos-stat-val" id="stat-played">0</div>
-      <div class="pos-stat-label">Songs Played</div>
-    </div>
-    <div>
-      <div class="pos-stat-val" id="stat-remaining">—</div>
-      <div class="pos-stat-label">Remaining</div>
-    </div>
-    <div>
-      <div class="pos-stat-val" id="stat-unique">0</div>
-      <div class="pos-stat-label">Artists</div>
-    </div>
-    <div>
-      <div class="pos-stat-val" id="stat-avg-year">—</div>
-      <div class="pos-stat-label">Avg Year</div>
-    </div>
-  </div>
-  <div class="pos-right">
-    <div class="pos-event">PHILLY 500</div>
-    <div class="pos-event-sub">MEMORIAL DAY WEEKEND 2026</div>
-    <div class="pos-session" id="session-time">—</div>
-  </div>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="left-col">
-
-    <div class="comm-banner" id="comm-banner">
-      <div class="comm-label">⏸ Commercial Break</div>
-      <div class="comm-sub">Next countdown song coming up...</div>
-    </div>
-
-    <div class="np-card">
-      <div class="np-label">
-        <span>Now Playing</span>
-        <span class="np-pos-pill" id="np-pos-pill">—</span>
-      </div>
-      <div class="np-body">
-        <div>
-          <div class="np-song" id="np-song">Waiting for countdown...</div>
-          <div class="np-artist" id="np-artist">—</div>
-          <div class="np-meta">
-            Album: <span id="np-album">—</span> &nbsp;
-            Elapsed: <span id="np-elapsed">—</span>
-          </div>
-        </div>
-        <div style="text-align:right">
-          <div class="np-year-big" id="np-year">—</div>
-          <div class="np-decade" id="np-decade">—</div>
-        </div>
-      </div>
-      <div class="vu-row" id="vu-row"></div>
-    </div>
-
-    <div>
-      <div class="section-head">
-        Played This Session
-        <span class="section-count" id="recent-count">0 songs</span>
-      </div>
-      <div class="recent-list" id="recent-list">
-        <div class="empty-state">No songs yet this session</div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="right-col">
-    <div>
-      <div class="section-head">Countdown Stats</div>
-      <div class="stat-grid">
-        <div class="stat-tile">
-          <div class="stat-label">Songs</div>
-          <div class="stat-value" id="r-songs">0</div>
-          <div class="stat-sub">this session</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Artists</div>
-          <div class="stat-value" id="r-artists">0</div>
-          <div class="stat-sub">unique</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Avg Year</div>
-          <div class="stat-value" id="r-year">—</div>
-          <div class="stat-sub">release</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Top Artist</div>
-          <div class="stat-value" style="font-size:13px;padding-top:6px" id="r-top">—</div>
-          <div class="stat-sub" id="r-top-plays">—</div>
-        </div>
-      </div>
-    </div>
-    <hr class="divider">
-    <div>
-      <div class="section-head">Decade Breakdown</div>
-      <div class="decade-chart" id="decade-chart">
-        <div class="empty-state" style="padding:8px 0">No data yet</div>
-      </div>
-    </div>
-    <hr class="divider">
-    <div>
-      <div class="section-head">Top Artists <span class="section-count" id="artist-count"></span></div>
-      <div class="artist-list" id="artist-list">
-        <div class="empty-state" style="padding:6px 0">No data yet</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-const WS_URL     = 'wss://wmgk-server-production.up.railway.app';
-const SERVER_URL = 'https://wmgk-server-production.up.railway.app';
-const OPERATOR_PIN = '1776';
-const DISPLAY_DELAY_MS = 25000;
-
-let songs = [], serverPosition = null, sessionStartTime = null;
-let currentStartMs = null, ws, reconnectTimer, displayTimer;
-let isOperator = false, isPaused = false, consecutiveErrors = 0;
-
-// ── PIN ──────────────────────────────────────────────────────────────────────
-function checkPin() {
-  const val = document.getElementById('pin-input').value;
-  if (val === OPERATOR_PIN) {
-    isOperator = true;
-    document.getElementById('pin-overlay').classList.add('hidden');
-    document.getElementById('op-controls').classList.add('show');
-    connect();
-    document.getElementById('start-overlay').classList.remove('hidden');
-  } else {
-    document.getElementById('pin-err').style.display = 'block';
-    document.getElementById('pin-input').value = '';
-  }
+async function redisCmd(cmd){
+  if(!REDIS_URL||!REDIS_TOKEN)return null;
+  try{const r=await fetch(REDIS_URL,{method:'POST',headers:{Authorization:`Bearer ${REDIS_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify(cmd)});const j=await r.json();return j.result;}
+  catch(e){console.error('[REDIS]',e.message);return null;}
 }
 
-function skipPin() {
-  document.getElementById('pin-overlay').classList.add('hidden');
-  connect();
+async function save(){
+  if(!REDIS_URL||!REDIS_TOKEN)return;
+  await redisCmd(['SET',REDIS_KEY,JSON.stringify({songs,pos,active,paused})]);
+  console.log(`[REDIS] saved songs:${songs.length} pos:${pos} paused:${paused}`);
 }
 
-function showStartOverlay() {
-  document.getElementById('start-overlay').classList.remove('hidden');
+async function load(){
+  if(!REDIS_URL||!REDIS_TOKEN){console.log('[REDIS] no creds');return;}
+  const d=await redisCmd(['GET',REDIS_KEY]);
+  if(!d){console.log('[REDIS] empty');return;}
+  try{const p=JSON.parse(d);songs=p.songs||[];pos=p.pos??null;active=p.active??false;paused=p.paused??false;console.log(`[REDIS] loaded songs:${songs.length} pos:${pos} paused:${paused}`);}
+  catch(e){console.error('[REDIS] parse',e.message);}
 }
 
-// ── Session controls ─────────────────────────────────────────────────────────
-async function startSession() {
-  const pos = parseInt(document.getElementById('start-pos').value) || 500;
-  try {
-    await fetch(`${SERVER_URL}/start?position=${pos}`, { method: 'POST' });
-    sessionStartTime = Date.now();
-    document.getElementById('start-overlay').classList.add('hidden');
-  } catch(e) { console.error('start failed', e); }
-}
-
-async function resumeFromServer() {
-  document.getElementById('start-overlay').classList.add('hidden');
-  sessionStartTime = Date.now();
-  connect();
-}
-
-async function doPause() {
-  try {
-    await fetch(`${SERVER_URL}/pause`, { method: 'POST' });
-  } catch(e) { console.error('pause failed', e); }
-}
-
-async function doResume() {
-  try {
-    await fetch(`${SERVER_URL}/resume`, { method: 'POST' });
-  } catch(e) { console.error('resume failed', e); }
-}
-
-async function doAdjust(delta) {
-  try {
-    await fetch(`${SERVER_URL}/adjust?delta=${delta}`, { method: 'POST' });
-  } catch(e) { console.error('adjust failed', e); }
-}
-
-// ── Clock ────────────────────────────────────────────────────────────────────
-setInterval(() => {
-  document.getElementById('clock').textContent =
-    new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}, 1000);
-
-setInterval(() => {
-  if (!sessionStartTime) return;
-  const e = Math.floor((Date.now()-sessionStartTime)/1000);
-  const h=Math.floor(e/3600), m=Math.floor((e%3600)/60), s=e%60;
-  document.getElementById('session-time').textContent =
-    `Session: ${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
-}, 1000);
-
-setInterval(() => {
-  if (!currentStartMs) return;
-  const e = Math.round((Date.now()-currentStartMs)/1000);
-  document.getElementById('np-elapsed').textContent =
-    `${Math.floor(e/60)}:${String(e%60).padStart(2,'0')}`;
-}, 1000);
-
-// ── VU meter ─────────────────────────────────────────────────────────────────
-const vuRow = document.getElementById('vu-row');
-const vuBars = [];
-for (let i=0;i<36;i++){const b=document.createElement('div');b.className='vu-bar';b.style.height='4px';vuRow.appendChild(b);vuBars.push(b);}
-let vuActive = false;
-setInterval(()=>{
-  if(!vuActive)return;
-  vuBars.forEach((bar,i)=>{
-    const t=i/vuBars.length;
-    const h=Math.max(2,Math.min(24,(1-Math.abs(t-0.42)*1.9)*24+(Math.random()-0.5)*9));
-    bar.style.height=h+'px';
-    bar.style.background=h>20?'#e84040':h>13?'#e8a020':'#3ecf6a';
-    bar.style.opacity=0.5+(h/24)*0.5;
-  });
-},110);
-
-// ── Render helpers ────────────────────────────────────────────────────────────
-function decadeOf(y){return Math.floor(y/10)*10;}
-
-function renderNowPlaying(track) {
-  currentStartMs = track.startMs;
-  vuActive = true;
-  consecutiveErrors = 0;
-  document.getElementById('comm-banner').classList.remove('show');
-  document.getElementById('np-song').textContent = track.song;
-  document.getElementById('np-artist').textContent = track.artist;
-  document.getElementById('np-album').textContent = track.album || '—';
-  document.getElementById('np-year').textContent = track.year || '—';
-  document.getElementById('np-decade').textContent = track.year ? decadeOf(track.year)+'s' : '—';
-  document.getElementById('np-pos-pill').textContent = track.position != null ? `#${track.position}` : '—';
-}
-
-function updatePosition(pos) {
-  serverPosition = pos;
-  if (pos != null) {
-    document.getElementById('pos-number').textContent = pos;
-    document.getElementById('stat-remaining').textContent = Math.max(0, pos-1);
-  }
-}
-
-function renderRecent() {
-  const container = document.getElementById('recent-list');
-  document.getElementById('recent-count').textContent = `${songs.length} song${songs.length!==1?'s':''}`;
-  if (!songs.length) { container.innerHTML = '<div class="empty-state">No songs yet this session</div>'; return; }
-  container.innerHTML = '';
-  [...songs].reverse().forEach((s,i)=>{
-    const item = document.createElement('div');
-    item.className = 'recent-item'+(i===0?' new':'');
-    const t = new Date(s.fetchedAt||Date.now()).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    item.innerHTML = `
-      <div class="recent-pos">${s.position!=null?s.position:'—'}</div>
-      <div><div class="recent-title">${s.song}</div><div class="recent-artist">${s.artist}</div></div>
-      <div class="recent-time">${t}</div>`;
-    container.appendChild(item);
-  });
-}
-
-function renderStats() {
-  const n = songs.length;
-  document.getElementById('r-songs').textContent = n;
-  document.getElementById('stat-played').textContent = n;
-  const unique = new Set(songs.map(s=>s.artist.toLowerCase())).size;
-  document.getElementById('r-artists').textContent = unique;
-  document.getElementById('stat-unique').textContent = unique;
-  const withYears = songs.filter(s=>s.year);
-  if (withYears.length) {
-    const avg = Math.round(withYears.reduce((a,s)=>a+s.year,0)/withYears.length);
-    document.getElementById('r-year').textContent = avg;
-    document.getElementById('stat-avg-year').textContent = avg;
-  }
-  const counts = {};
-  songs.forEach(s=>{counts[s.artist]=(counts[s.artist]||0)+1;});
-  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  if (sorted.length) {
-    document.getElementById('r-top').textContent = sorted[0][0];
-    document.getElementById('r-top-plays').textContent = `${sorted[0][1]} song${sorted[0][1]!==1?'s':''}`;
-  }
-}
-
-function renderDecades() {
-  const counts = {};
-  songs.filter(s=>s.year).forEach(s=>{const d=decadeOf(s.year)+'s';counts[d]=(counts[d]||0)+1;});
-  const decades = ['1960s','1970s','1980s','1990s','2000s'];
-  const max = Math.max(...Object.values(counts),1);
-  const container = document.getElementById('decade-chart');
-  if (!Object.keys(counts).length){container.innerHTML='<div class="empty-state" style="padding:8px 0">No data yet</div>';return;}
-  container.innerHTML='';
-  decades.forEach(d=>{
-    const c=counts[d]||0;
-    const row=document.createElement('div');
-    row.className='decade-row';
-    row.innerHTML=`<div class="decade-label">${d}</div><div class="decade-track"><div class="decade-fill" style="width:0%" data-target="${Math.round((c/max)*100)}%"></div></div><div class="decade-count">${c}</div>`;
-    container.appendChild(row);
-  });
-  setTimeout(()=>document.querySelectorAll('.decade-fill').forEach(el=>el.style.width=el.dataset.target),50);
-}
-
-function renderArtists() {
-  const counts={};
-  songs.forEach(s=>{counts[s.artist]=(counts[s.artist]||0)+1;});
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
-  const container=document.getElementById('artist-list');
-  document.getElementById('artist-count').textContent=sorted.length?`${sorted.length} artists`:'';
-  if(!sorted.length){container.innerHTML='<div class="empty-state" style="padding:6px 0">No data yet</div>';return;}
-  container.innerHTML='';
-  sorted.forEach(([name,plays],i)=>{
-    const row=document.createElement('div');
-    row.className='artist-row';
-    row.innerHTML=`<div class="artist-rank">${i+1}</div><div class="artist-name">${name}</div><div class="artist-plays">${plays}×</div>`;
-    container.appendChild(row);
-  });
-}
-
-function renderAll(){renderRecent();renderStats();renderDecades();renderArtists();}
-
-function setPaused(paused) {
-  isPaused = paused;
-  document.getElementById('pause-banner').classList.toggle('show', paused);
-  if (isOperator) {
-    document.getElementById('btn-pause').style.display = paused ? 'none' : '';
-    document.getElementById('btn-resume').style.display = paused ? '' : 'none';
-  }
-  if (paused) { vuActive = false; }
-}
-
-// ── WebSocket ─────────────────────────────────────────────────────────────────
-function connect() {
-  const badge = document.getElementById('ws-badge');
-  badge.className='ws-badge connecting'; badge.textContent='CONNECTING';
-  ws = new WebSocket(WS_URL);
-
-  ws.onopen = () => {
-    badge.className='ws-badge ok'; badge.textContent='LIVE ✓';
-    clearTimeout(reconnectTimer);
-  };
-
-  ws.onmessage = (evt) => {
-    const msg = JSON.parse(evt.data);
-
-    if (msg.type === 'init') {
-      if (msg.songs && msg.songs.length > songs.length) songs = msg.songs;
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-      if (msg.current) renderNowPlaying(msg.current);
-      setPaused(msg.sessionPaused || false);
-      if (!sessionStartTime && msg.sessionActive) sessionStartTime = Date.now();
-      renderAll();
-    }
-
-    if (msg.type === 'track') {
-      clearTimeout(displayTimer);
-      displayTimer = setTimeout(() => {
-        const track = msg.track;
-        // Deduplicate
-        if (songs.length && songs[songs.length-1].song.toLowerCase() === track.song.toLowerCase()) return;
-        songs.push(track);
-        if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-        renderNowPlaying(track);
-        renderAll();
-      }, DISPLAY_DELAY_MS);
-    }
-
-    if (msg.type === 'heartbeat') {
-      consecutiveErrors = 0;
-      if (msg.songs && msg.songs.length > songs.length) { songs = msg.songs; renderAll(); }
-      if (msg.paused !== undefined) setPaused(msg.paused);
-    }
-
-    if (msg.type === 'session_start') {
-      songs = msg.songs || [];
-      updatePosition(msg.currentPosition);
-      setPaused(false);
-      sessionStartTime = Date.now();
-      renderAll();
-    }
-
-    if (msg.type === 'session_paused') {
-      setPaused(true);
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-    }
-
-    if (msg.type === 'session_resumed') {
-      setPaused(false);
-      if (msg.songs) songs = msg.songs;
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-      if (msg.current) renderNowPlaying(msg.current);
-      renderAll();
-    }
-
-    if (msg.type === 'position_adjusted') {
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-    }
-
-    if (msg.type === 'poll_error') {
-      consecutiveErrors++;
-      if (consecutiveErrors >= 3) {
-        document.getElementById('comm-banner').classList.add('show');
-        vuActive = false;
+async function fetchMB(song,artist){
+  try{
+    const q=encodeURIComponent(`recording:"${song}" artist:"${artist}"`);
+    const r=await fetch(`https://musicbrainz.org/ws/2/recording/?query=${q}&limit=10&fmt=json`,{headers:{'User-Agent':'WMGK-Philly500/1.0 (philly500@gmail.com)'}});
+    const d=await r.json();
+    const SKIP=['compilation','live','remix','soundtrack','mixtape/street'];
+    const SKIP_RE=/\b(greatest|hits|best|collection|compilation|anthology|remaster|remastered|live|concert)\b/i;
+    let bestYear=null,bestAlbum=null;
+    for(const rec of d.recordings||[]){
+      for(const rel of rec.releases||[]){
+        const rg=rel['release-group']||{};
+        const pt=(rg['primary-type']||'').toLowerCase();
+        const st=(rg['secondary-types']||[]).map(t=>t.toLowerCase());
+        if(pt&&pt!=='album')continue;
+        if(st.some(t=>SKIP.includes(t)))continue;
+        if(SKIP_RE.test(rel.title||''))continue;
+        const y=parseInt((rel.date||'').slice(0,4));
+        if(!y||y<1950||y>2030)continue;
+        if(!bestYear||y<bestYear){bestYear=y;bestAlbum=rel.title;}
       }
     }
-  };
-
-  ws.onerror = () => { badge.className='ws-badge err'; badge.textContent='NO SERVER'; };
-  ws.onclose = () => {
-    badge.className='ws-badge connecting'; badge.textContent='RECONNECTING';
-    clearTimeout(reconnectTimer);
-    reconnectTimer = setTimeout(connect, 5000);
-  };
+    if(!bestYear){bestYear=guessYear(song);}
+    console.log(`[MB] "${song}" → year:${bestYear} album:${bestAlbum}`);
+    return{year:bestYear,album:bestAlbum};
+  }catch(e){console.error('[MB]',e.message);return{year:guessYear(song),album:null};}
 }
-</script>
-</body>
-</html>
+
+function parseXML(xml){
+  const all={};const re=/name="([^"]+)"[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/property>/g;let m;
+  while((m=re.exec(xml))!==null)all[m[1]]=m[2].trim();
+  const song=all['cue_title']||all['title']||all['name'];
+  const artist=all['track_artist_name']||all['artist']||all['performer'];
+  const album=all['track_album_name']||all['album'];
+  const startMs=all['cue_time_start']||all['start'];
+  if(!song&&!artist)throw new Error('no track data');
+  const dec=s=>s?s.replace(/&amp;/g,'&').replace(/&apos;/g,"'").replace(/&quot;/g,'"'):s;
+  const st=startMs?new Date(parseInt(startMs)):new Date();
+  return{song:dec(song)||'Unknown',artist:dec(artist)||'Unknown',album:dec(album)||null,startTime:st.toISOString(),startMs:startMs?parseInt(startMs):Date.now(),fetchedAt:new Date().toISOString()};
+}
+
+function fetchTriton(){
+  const url=`https://np.tritondigital.com/public/nowplaying?mountName=${MOUNT}&numberToFetch=1&eventType=track&request.preventCache=${Date.now()}`;
+  return new Promise((res,rej)=>{
+    const req=https.get(url,{headers:{'User-Agent':'WMGK-Dashboard/1.0'},timeout:8000},r=>{
+      const chunks=[];r.on('data',c=>chunks.push(c));r.on('end',()=>{try{res(parseXML(Buffer.concat(chunks).toString()));}catch(e){rej(e);}});
+    });
+    req.on('error',rej);req.on('timeout',()=>{req.destroy();rej(new Error('timeout'));});
+  });
+}
+
+const wss=new WebSocket.Server({noServer:true});
+function broadcast(msg){const p=JSON.stringify(msg);wss.clients.forEach(c=>{if(c.readyState===WebSocket.OPEN)c.send(p);});}
+
+async function poll(){
+  pollCount++;lastPoll=new Date().toISOString();
+  try{
+    const t=await fetchTriton();lastStatus='ok';
+    const key=x=>`${x.song.toLowerCase()}|||${x.artist.toLowerCase()}`;
+    const isNew=key(t)!==(track?key(track):null);
+    if(isNew){
+      track=t;
+      if(paused||!active){
+        console.log(`[IGNORED ${paused?'PAUSED':'NOT STARTED'}] "${t.song}"`);
+        broadcast({type:'heartbeat',track,paused,pollCount,clients:wss.clients.size,songs});
+        return;
+      }
+      const{year,album}=await fetchMB(t.song,t.artist);
+      t.year=year;t.album=album||t.album;t.position=pos;
+      if(pos!==null)pos--;
+      songs.push(t);
+      await save();
+      const elapsed=Math.round((Date.now()-t.startMs)/1000);
+      console.log(`[NEW] "${t.song}" pos:${t.position} ~${elapsed}s ago`);
+      broadcast({type:'track',track:t,sessionCount:songs.length,currentPosition:pos,elapsedSeconds:elapsed});
+    }else{
+      const elapsed=Math.round((Date.now()-(track?.startMs||Date.now()))/1000);
+      broadcast({type:'heartbeat',track,elapsedSeconds:elapsed,paused,pollCount,clients:wss.clients.size,songs});
+    }
+  }catch(e){errCount++;lastStatus='error';console.error(`[ERR #${errCount}]`,e.message);broadcast({type:'poll_error',error:e.message});}
+}
+
+const httpServer=http.createServer(async(req,res)=>{
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Methods','GET,POST');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type');
+  if(req.method==='OPTIONS'){res.writeHead(204);res.end();return;}
+  const u=new URL(req.url,'http://localhost');
+
+  if(u.pathname==='/'||u.pathname==='/health'){
+    res.writeHead(200,{'Content-Type':'application/json'});
+    res.end(JSON.stringify({status:'ok',mount:MOUNT,pollCount,errCount,lastPoll,lastStatus,sessionSongs:songs.length,active,paused,currentPosition:pos,current:track},null,2));
+    return;
+  }
+  if(u.pathname==='/songs'){res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify(songs,null,2));return;}
+
+  if(u.pathname==='/start'&&req.method==='POST'){
+    const p=parseInt(u.searchParams.get('position'))||500;
+    pos=p;active=true;paused=false;songs=[];
+    await save();
+    broadcast({type:'session_start',currentPosition:pos,sessionActive:true,sessionPaused:false,songs:[]});
+    console.log(`[START] pos:${p}`);
+    res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:true,currentPosition:pos}));
+    return;
+  }
+
+  if(u.pathname==='/pause'&&req.method==='POST'){
+    paused=true;await save();
+    broadcast({type:'session_paused',currentPosition:pos,songs});
+    console.log(`[PAUSE] pos:${pos}`);
+    res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:true,sessionPaused:true,currentPosition:pos}));
+    return;
+  }
+
+  if(u.pathname==='/resume'&&req.method==='POST'){
+    paused=false;await save();
+    broadcast({type:'session_resumed',currentPosition:pos,sessionActive:active,sessionPaused:false,songs,current:track});
+    console.log(`[RESUME] pos:${pos}`);
+    res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:true,sessionPaused:false,currentPosition:pos}));
+    return;
+  }
+
+  if(u.pathname==='/adjust'&&req.method==='POST'){
+    const delta=parseInt(u.searchParams.get('delta'))||0;
+    if(pos!==null){pos=Math.max(0,Math.min(500,pos+delta));await save();broadcast({type:'position_adjusted',currentPosition:pos});}
+    res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:true,currentPosition:pos}));
+    return;
+  }
+
+  if(u.pathname==='/test'){
+    const f=path.join(__dirname,'test.html');
+    if(fs.existsSync(f)){res.writeHead(200,{'Content-Type':'text/html'});fs.createReadStream(f).pipe(res);}
+    else{res.writeHead(404);res.end('not found');}
+    return;
+  }
+  res.writeHead(404);res.end('not found');
+});
+
+httpServer.on('upgrade',(req,socket,head)=>{wss.handleUpgrade(req,socket,head,ws=>{wss.emit('connection',ws,req);});});
+wss.on('connection',ws=>{
+  console.log(`[WS] connected total:${wss.clients.size}`);
+  ws.send(JSON.stringify({type:'init',current:track,songs,currentPosition:pos,sessionActive:active,sessionPaused:paused,meta:{mount:MOUNT,pollInterval:POLL_INTERVAL,lastStatus,lastPoll}}));
+  ws.on('close',()=>console.log(`[WS] disconnected total:${wss.clients.size}`));
+  ws.on('error',e=>console.error('[WS]',e.message));
+});
+
+load().then(()=>{
+  httpServer.listen(PORT,()=>{
+    console.log(`\n🎸 WMGK on port ${PORT} — songs:${songs.length} pos:${pos} paused:${paused}\n`);
+    poll();setInterval(poll,POLL_INTERVAL);
+  });
+});
+process.on('SIGTERM',()=>httpServer.close(()=>process.exit(0)));
