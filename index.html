@@ -133,6 +133,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
 .artist-rank{font-family:var(--mono);font-size:8px;color:var(--amber-dim);text-align:center;}
 .artist-name{font-family:var(--sans);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .artist-plays{font-family:var(--mono);font-size:9px;color:var(--muted);padding:1px 5px;background:var(--border);border-radius:8px;flex-shrink:0;}
+
+.fun-facts-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;display:none;}
+.fun-facts-card.show{display:block;}
+.fun-facts-label{padding:9px 14px 7px;font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.fun-facts-label::before{content:'★';color:var(--amber);}
+.fun-facts-list{padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+.fun-fact-item{font-family:var(--sans);font-size:13px;color:var(--text);line-height:1.6;padding-left:12px;border-left:2px solid var(--amber-dim);}
 </style>
 </head>
 <body>
@@ -247,6 +254,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
         </div>
       </div>
       <div class="vu-row" id="vu-row"></div>
+    </div>
+
+
+    <div class="fun-facts-card" id="fun-facts-card">
+      <div class="fun-facts-label">Did You Know?</div>
+      <div class="fun-facts-list" id="fun-facts-list"></div>
     </div>
 
     <div>
@@ -413,6 +426,8 @@ setInterval(()=>{
 function decadeOf(y){return Math.floor(y/10)*10;}
 
 function renderNowPlaying(track) {
+  document.getElementById('fun-facts-card').classList.remove('show');
+  document.getElementById('fun-facts-list').innerHTML = '';
   currentStartMs = track.startMs;
   vuActive = true;
   consecutiveErrors = 0;
@@ -583,6 +598,20 @@ function connect() {
 
     if (msg.type === 'position_adjusted') {
       if (msg.currentPosition != null) updatePosition(msg.currentPosition);
+    }
+
+
+    if (msg.type === 'fun_facts') {
+      const card = document.getElementById('fun-facts-card');
+      const list = document.getElementById('fun-facts-list');
+      list.innerHTML = '';
+      msg.facts.forEach(fact => {
+        const item = document.createElement('div');
+        item.className = 'fun-fact-item';
+        item.textContent = fact;
+        list.appendChild(item);
+      });
+      card.classList.add('show');
     }
 
     if (msg.type === 'poll_error') {
