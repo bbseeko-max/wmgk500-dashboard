@@ -57,19 +57,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
 .op-controls.show{display:flex;}
 
 /* POSITION BANNER */
-.pos-banner{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:16px;}
-.pos-left{display:flex;align-items:baseline;gap:10px;}
+.pos-banner{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
 .pos-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
-.pos-number{font-family:var(--display);font-size:64px;line-height:1;color:var(--amber);letter-spacing:2px;text-shadow:0 0 40px var(--amber-glow);transition:all 0.5s;}
-.pos-of{font-family:var(--mono);font-size:10px;color:var(--muted);}
-.pos-divider{width:1px;height:50px;background:var(--border);flex-shrink:0;}
-.pos-stats{display:flex;gap:20px;flex-wrap:wrap;}
-.pos-stat-val{font-family:var(--display);font-size:22px;color:var(--text);line-height:1;}
-.pos-stat-label{font-family:var(--mono);font-size:7px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
-.pos-right{margin-left:auto;text-align:right;flex-shrink:0;}
-.pos-event{font-family:var(--display);font-size:18px;color:var(--amber);letter-spacing:2px;}
-.pos-event-sub{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
-.pos-session{font-family:var(--mono);font-size:9px;color:var(--amber);margin-top:3px;}
+.pos-number{font-family:var(--display);font-size:96px;line-height:1;color:var(--amber);letter-spacing:2px;text-shadow:0 0 60px var(--amber-glow);transition:all 0.5s;}
+.pos-of{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.pos-divider{width:1px;height:70px;background:var(--border);}
+.pos-stats{display:flex;gap:28px;}
+.pos-stat-val{font-family:var(--display);font-size:30px;color:var(--text);line-height:1;}
+.pos-stat-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.pos-right{margin-left:auto;text-align:right;}
+.pos-event{font-family:var(--display);font-size:24px;color:var(--amber);letter-spacing:2px;}
+.pos-event-sub{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+.pos-session{font-family:var(--mono);font-size:10px;color:var(--amber);margin-top:4px;}
 
 /* MAIN LAYOUT */
 .main{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 200px);}
@@ -93,10 +92,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
 .vu-bar{width:5px;border-radius:1px;background:var(--amber);transition:height 0.1s ease;}
 
 /* COMMERCIAL */
-.comm-banner{background:rgba(14,14,14,0.95);border:2px solid var(--amber);border-radius:4px;padding:24px 18px;text-align:center;display:none;}
+.comm-banner{background:rgba(232,160,32,0.06);border:1px solid var(--amber-dim);border-radius:4px;padding:14px 18px;text-align:center;display:none;}
 .comm-banner.show{display:block;}
-.comm-label{font-family:var(--display);font-size:36px;letter-spacing:4px;color:var(--amber);}
-.comm-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:8px;letter-spacing:2px;}
+.comm-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--amber);text-transform:uppercase;}
+.comm-sub{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:4px;}
 
 /* SECTION */
 .section-head{font-family:var(--mono);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;}
@@ -135,14 +134,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
 .artist-name{font-family:var(--sans);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .artist-plays{font-family:var(--mono);font-size:9px;color:var(--muted);padding:1px 5px;background:var(--border);border-radius:8px;flex-shrink:0;}
 
-.fun-facts-card{display:block;}
-.fun-facts-list{display:flex;flex-direction:column;gap:8px;}
-.fun-fact-item{font-family:var(--sans);font-size:11px;color:var(--text);line-height:1.5;padding:6px 8px 6px 10px;border-left:2px solid var(--amber-dim);background:var(--bg);border-radius:0 2px 2px 0;}
-
-.history-section{margin-top:0;}
-.history-badge{display:inline-block;font-family:var(--mono);font-size:11px;padding:4px 10px;background:var(--amber-glow);border:1px solid var(--amber-dim);border-radius:2px;color:var(--amber);margin-top:4px;}
-.history-badge.not-ranked{color:var(--muted);border-color:var(--border);background:transparent;}
-.history-new{font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:1px;}
+.fun-facts-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;display:none;}
+.fun-facts-card.show{display:block;}
+.fun-facts-label{padding:9px 14px 7px;font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.fun-facts-label::before{content:'★';color:var(--amber);}
+.fun-facts-list{padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+.fun-fact-item{font-family:var(--sans);font-size:13px;color:var(--text);line-height:1.6;padding-left:12px;border-left:2px solid var(--amber-dim);}
 </style>
 </head>
 <body>
@@ -197,22 +194,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
 
 <!-- POSITION BANNER -->
 <div class="pos-banner">
-  <div class="pos-left">
+  <div>
+    <div class="pos-label">Current Position</div>
     <div class="pos-number" id="pos-number">—</div>
-    <div>
-      <div class="pos-label">Current Position</div>
-      <div class="pos-of">of 500</div>
-    </div>
+    <div class="pos-of">of 500</div>
   </div>
   <div class="pos-divider"></div>
   <div class="pos-stats">
     <div>
       <div class="pos-stat-val" id="stat-played">0</div>
-      <div class="pos-stat-label">Played</div>
+      <div class="pos-stat-label">Songs Played</div>
     </div>
     <div>
       <div class="pos-stat-val" id="stat-remaining">—</div>
-      <div class="pos-stat-label">Left</div>
+      <div class="pos-stat-label">Remaining</div>
     </div>
     <div>
       <div class="pos-stat-val" id="stat-unique">0</div>
@@ -259,10 +254,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
         </div>
       </div>
       <div class="vu-row" id="vu-row"></div>
-
     </div>
 
 
+    <div class="fun-facts-card" id="fun-facts-card">
+      <div class="fun-facts-label">Did You Know?</div>
+      <div class="fun-facts-list" id="fun-facts-list"></div>
+    </div>
 
     <div>
       <div class="section-head">
@@ -316,19 +314,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
         <div class="empty-state" style="padding:6px 0">No data yet</div>
       </div>
     </div>
-  <hr class="divider">
-    <div>
-      <div class="section-head">2025 Philly 500 Ranking</div>
-      <div id="history-ranking" style="padding:4px 0 12px 0">
-        <div class="empty-state" style="padding:4px 0">Ranking appears when song plays</div>
-      </div>
-      <div class="section-head">Did You Know?</div>
-      <div class="fun-facts-card" id="fun-facts-card">
-        <div class="fun-facts-list" id="fun-facts-list">
-          <div class="empty-state" style="padding:8px 0">Facts appear when a song is detected</div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -336,10 +321,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:h
 const WS_URL     = 'wss://wmgk-server-production.up.railway.app';
 const SERVER_URL = 'https://wmgk-server-production.up.railway.app';
 const OPERATOR_PIN = '1776';
-const DISPLAY_DELAY_MS = 0;
+const DISPLAY_DELAY_MS = 25000;
 
 let songs = [], serverPosition = null, sessionStartTime = null;
-let currentStartMs = null, ws, reconnectTimer, displayTimer, pingTimer;
+let currentStartMs = null, ws, reconnectTimer, displayTimer;
 let isOperator = false, isPaused = false, consecutiveErrors = 0;
 
 // ── PIN ──────────────────────────────────────────────────────────────────────
@@ -442,7 +427,6 @@ function decadeOf(y){return Math.floor(y/10)*10;}
 
 function renderNowPlaying(track) {
   document.getElementById('fun-facts-card').classList.remove('show');
-  showHistoricalRanking(track.song);
   document.getElementById('fun-facts-list').innerHTML = '';
   currentStartMs = track.startMs;
   vuActive = true;
@@ -451,33 +435,7 @@ function renderNowPlaying(track) {
   document.getElementById('np-song').textContent = track.song;
   document.getElementById('np-artist').textContent = track.artist;
   document.getElementById('np-album').textContent = track.album || '—';
-  // Show 2025 ranking immediately inline
-  const rankKey = track.song.toLowerCase().trim().replace(/\s+/g,' ');
-  const rank2025 = PHILLY_2025[rankKey];
-  const rankEl = document.getElementById('np-ranking-text');
-  const rankDiv = document.getElementById('np-ranking');
-  if (rankEl && rankDiv) {
-    if (rank2025) {
-      const arrow = rank2025 <= 10 ? '🏆' : rank2025 <= 50 ? '⭐' : rank2025 <= 100 ? '🔥' : '📍';
-      rankEl.textContent = arrow + ' 2025 Philly 500: #' + rank2025 + ' of 500';
-      rankDiv.style.color = 'var(--amber)';
-    } else {
-      rankEl.textContent = '🆕 Not ranked in 2025 — possible new entry!';
-      rankDiv.style.color = '#7a7670';
-    }
-    rankDiv.style.display = 'block';
-  }
-  const displayYear = track.year || '—';
-  const yearEl = document.getElementById('np-year');
-  yearEl.textContent = displayYear;
-  // Dim years that look like remasters (post-2005 for classic rock)
-  if (track.year && track.year > 2005) {
-    yearEl.style.opacity = '0.4';
-    yearEl.title = 'Possible remaster date';
-  } else {
-    yearEl.style.opacity = '1';
-    yearEl.title = '';
-  }
+  document.getElementById('np-year').textContent = track.year || '—';
   document.getElementById('np-decade').textContent = track.year ? decadeOf(track.year)+'s' : '—';
   document.getElementById('np-pos-pill').textContent = track.position != null ? `#${track.position}` : '—';
 }
@@ -486,7 +444,7 @@ function updatePosition(pos) {
   serverPosition = pos;
   if (pos != null) {
     document.getElementById('pos-number').textContent = pos;
-    document.getElementById('stat-remaining').textContent = Math.max(0, pos);
+    document.getElementById('stat-remaining').textContent = Math.max(0, pos-1);
   }
 }
 
@@ -511,7 +469,7 @@ function renderStats() {
   const n = songs.length;
   document.getElementById('r-songs').textContent = n;
   document.getElementById('stat-played').textContent = n;
-  const unique = new Set(songs.map(s=>s.artist.toLowerCase().trim())).size;
+  const unique = new Set(songs.map(s=>s.artist.toLowerCase())).size;
   document.getElementById('r-artists').textContent = unique;
   document.getElementById('stat-unique').textContent = unique;
   const withYears = songs.filter(s=>s.year);
@@ -544,18 +502,13 @@ function renderDecades() {
     row.innerHTML=`<div class="decade-label">${d}</div><div class="decade-track"><div class="decade-fill" style="width:0%" data-target="${Math.round((c/max)*100)}%"></div></div><div class="decade-count">${c}</div>`;
     container.appendChild(row);
   });
-  setTimeout(()=>document.querySelectorAll('.decade-fill').forEach(el=>el.style.width=el.dataset.target),10);
+  setTimeout(()=>document.querySelectorAll('.decade-fill').forEach(el=>el.style.width=el.dataset.target),50);
 }
 
 function renderArtists() {
   const counts={};
-  const display={};
-  songs.forEach(s=>{
-    const key=s.artist.toLowerCase();
-    counts[key]=(counts[key]||0)+1;
-    if(!display[key]) display[key]=s.artist;
-  });
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([k,v])=>[display[k],v]);
+  songs.forEach(s=>{counts[s.artist]=(counts[s.artist]||0)+1;});
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
   const container=document.getElementById('artist-list');
   document.getElementById('artist-count').textContent=sorted.length?`${sorted.length} artists`:'';
   if(!sorted.length){container.innerHTML='<div class="empty-state" style="padding:6px 0">No data yet</div>';return;}
@@ -592,32 +545,33 @@ function connect() {
   };
 
   ws.onmessage = (evt) => {
-    lastUpdateTime = Date.now();
     const msg = JSON.parse(evt.data);
 
     if (msg.type === 'init') {
-      if (msg.songs && msg.songs.length > 0) songs = msg.songs;
+      if (msg.songs && msg.songs.length > songs.length) songs = msg.songs;
       if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-      if (msg.current) { renderNowPlaying(msg.current); }
+      if (msg.current) renderNowPlaying(msg.current);
       setPaused(msg.sessionPaused || false);
-      if (msg.sessionActive) sessionStartTime = sessionStartTime || Date.now();
+      if (!sessionStartTime && msg.sessionActive) sessionStartTime = Date.now();
       renderAll();
     }
 
     if (msg.type === 'track') {
-      const track = msg.track;
-      if (!songs.length || songs[songs.length-1].song.toLowerCase() !== track.song.toLowerCase()) {
+      clearTimeout(displayTimer);
+      displayTimer = setTimeout(() => {
+        const track = msg.track;
+        // Deduplicate
+        if (songs.length && songs[songs.length-1].song.toLowerCase() === track.song.toLowerCase()) return;
         songs.push(track);
         if (msg.currentPosition != null) updatePosition(msg.currentPosition);
         renderNowPlaying(track);
         renderAll();
-      }
+      }, DISPLAY_DELAY_MS);
     }
 
     if (msg.type === 'heartbeat') {
       consecutiveErrors = 0;
       if (msg.songs && msg.songs.length > songs.length) { songs = msg.songs; renderAll(); }
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
       if (msg.paused !== undefined) setPaused(msg.paused);
     }
 
@@ -662,557 +616,20 @@ function connect() {
 
     if (msg.type === 'poll_error') {
       consecutiveErrors++;
-      if (consecutiveErrors >= 1) {
+      if (consecutiveErrors >= 3) {
         document.getElementById('comm-banner').classList.add('show');
         vuActive = false;
-        document.getElementById('np-song').textContent = 'COMMERCIAL BREAK';
-        document.getElementById('np-artist').textContent = 'Next countdown song coming up...';
-        document.getElementById('np-album').textContent = '—';
-        document.getElementById('np-year').textContent = '—';
-        document.getElementById('np-decade').textContent = '—';
       }
     }
   };
 
-  ws.onerror = () => { badge.className='ws-badge err'; badge.textContent='NO SERVER'; clearTimeout(reconnectTimer); reconnectTimer = setTimeout(connect, 5000); };
+  ws.onerror = () => { badge.className='ws-badge err'; badge.textContent='NO SERVER'; };
   ws.onclose = () => {
     badge.className='ws-badge connecting'; badge.textContent='RECONNECTING';
     clearTimeout(reconnectTimer);
-    clearInterval(pingTimer);
-    reconnectTimer = setTimeout(connect, 3000);
+    reconnectTimer = setTimeout(connect, 5000);
   };
-
-  // Keepalive ping every 25 seconds to prevent connection drop
-  clearInterval(pingTimer);
-  pingTimer = setInterval(() => {
-    if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({type:'ping'}));
-  }, 25000);
 }
-
-
-const PHILLY_2025 = {
-  '25 or 6 to 4':10,
-  'a day in the life':19,
-  'a hard day\'s night':277,
-  'a horse with no name':241,
-  'africa':409,
-  'against the wind':20,
-  'ain\'t talkin\' bout love':260,
-  'all along the watchtower':88,
-  'all day and all of the night':311,
-  'all my love':272,
-  'all you need is love':170,
-  'all you zombies':211,
-  'already gone':254,
-  'amanda':341,
-  'american girl':61,
-  'american pie':78,
-  'and we danced':283,
-  'angie':443,
-  'aqualung':122,
-  'baba o\'riley':14,
-  'babe i\'m gonna leave you':92,
-  'back in black':66,
-  'back in the saddle':68,
-  'bad company':123,
-  'bad medicine':378,
-  'bad moon rising':487,
-  'badlands':82,
-  'ballroom blitz':179,
-  'band on the run':279,
-  'basket case':402,
-  'beast of burden':103,
-  'beginnings':145,
-  'bennie and the jets':474,
-  'beth':461,
-  'black':182,
-  'black betty':222,
-  'black dog':106,
-  'black hole sun':273,
-  'black water':226,
-  'blue sky':109,
-  'bohemian rhapsody':13,
-  'born in the u.s.a.':307,
-  'born on the bayou':299,
-  'born to run':28,
-  'boulevard of broken dreams':185,
-  'boys of summer':43,
-  'brain damage':115,
-  'brandy':136,
-  'break on through':249,
-  'breakdown':294,
-  'bringin\' on the heartbreak':280,
-  'brown eyed girl':310,
-  'call me':447,
-  'call me the breeze':274,
-  'can\'t find my way home':376,
-  'can\'t you hear me knocking':266,
-  'can\'t you see':362,
-  'captain jack':140,
-  'carry on wayward son':67,
-  'casey jones':472,
-  'caught up in you':81,
-  'celluloid heroes':189,
-  'changes':397,
-  'china grove':337,
-  'cocaine':375,
-  'come as you are':77,
-  'come dancing':351,
-  'come monday':73,
-  'come sail away':282,
-  'come together':300,
-  'comfortably numb':6,
-  'communication breakdown':434,
-  'crazy on you':17,
-  'crazy train':141,
-  'crossroads':497,
-  'cryin\'':495,
-  'dance the night away':3,
-  'dancing in the dark':383,
-  'day after day':267,
-  'day tripper':344,
-  'dazed and confused':91,
-  'dead flowers':483,
-  'december':361,
-  'desperado':111,
-  'destroyer':370,
-  'dirty deeds done dirt cheap':21,
-  'dirty laundry':455,
-  'dixie chicken':323,
-  'do you feel like we do':4,
-  'don\'t ask me no questions':345,
-  'don\'t fear the reaper':84,
-  'don\'t let me be misunderstood':271,
-  'don\'t let the sun go down':327,
-  'don\'t stop believin\'':380,
-  'doo doo doo doo doo':314,
-  'down on the corner':498,
-  'dream on':32,
-  'dream police':324,
-  'dreams':342,
-  'drive':157,
-  'dude looks like a lady':290,
-  'dust in the wind':228,
-  'edge of seventeen':379,
-  'eighteen':276,
-  'eleanor rigby':210,
-  'eminence front':287,
-  'end of the line':453,
-  'enter sandman':34,
-  'everlong':202,
-  'everybody wants to rule the world':481,
-  'evil woman':275,
-  'faithfully':424,
-  'fame':500,
-  'fat bottomed girls':180,
-  'feel like makin\' love':95,
-  'feelin\' alright':484,
-  'feeling stronger every day':426,
-  'flirtin\' with disaster':354,
-  'fool in the rain':338,
-  'foolin\'':482,
-  'for those about to rock':70,
-  'foreplay long time':46,
-  'fortunate son':196,
-  'frankenstein':436,
-  'free bird':9,
-  'free fallin\'':162,
-  'funeral for a friend':59,
-  'funk 49':304,
-  'get back':204,
-  'get off of my cloud':435,
-  'gimme shelter':12,
-  'gimme three steps':230,
-  'give a little bit':448,
-  'glory days':134,
-  'go your own way':166,
-  'godzilla':130,
-  'going to california':364,
-  'going up the country':259,
-  'gold dust woman':469,
-  'golden slumbers':96,
-  'good times bad times':168,
-  'goodbye yellow brick road':270,
-  'got to get you into my life':192,
-  'green grass and high tides':114,
-  'gypsy':252,
-  'happy':449,
-  'harvest moon':458,
-  'have a cigar':369,
-  'have a drink on me':188,
-  'have you ever seen the rain':215,
-  'heart of gold':430,
-  'heart-shaped box':349,
-  'heartbreaker':181,
-  'heat of the moment':200,
-  'hello goodbye':218,
-  'hells bells':57,
-  'help':174,
-  'here comes the sun':85,
-  'heroes':48,
-  'hey hey what can i do':261,
-  'hey joe':463,
-  'hey jude':16,
-  'highway star':291,
-  'highway to hell':64,
-  'hit me with your best shot':332,
-  'hold on loosely':24,
-  'home by the sea':295,
-  'hot blooded':335,
-  'hot for teacher':392,
-  'hotel california':11,
-  'house of the rising sun':51,
-  'hungry heart':161,
-  'hysteria':347,
-  'i can\'t drive 55':359,
-  'i don\'t care anymore':147,
-  'i heard it thru the grapevine':296,
-  'i love rock n roll':427,
-  'i saw her standing there':220,
-  'i want a new drug':30,
-  'i want to hold your hand':326,
-  'i want to know what love is':281,
-  'i won\'t back down':473,
-  'i\'ll be there for you':150,
-  'i\'m still standing':466,
-  'i\'m your captain':451,
-  'i\'ve seen all good people':131,
-  'imagine':125,
-  'immigrant song':86,
-  'in my life':44,
-  'in the air tonight':139,
-  'interstate love song':263,
-  'into the mystic':201,
-  'iron man':255,
-  'it\'s a long way to the top':89,
-  'it\'s in the way that you use it':303,
-  'it\'s my life':460,
-  'it\'s still rock and roll to me':441,
-  'it\'s the end of the world':329,
-  'jack and diane':459,
-  'jane':352,
-  'janie\'s got a gun':208,
-  'jeremy':80,
-  'jessica':135,
-  'jesus is just alright':389,
-  'journey separate ways':38,
-  'juke box hero':187,
-  'jump':333,
-  'jumpin\' jack flash':306,
-  'jungleland':23,
-  'just what i needed':445,
-  'kashmir':18,
-  'king of pain':471,
-  'knockin\' on heaven\'s door':489,
-  'l.a. woman':164,
-  'land of confusion':233,
-  'landslide':55,
-  'lay lady lay':478,
-  'layla':104,
-  'learn to fly':465,
-  'learning to fly':433,
-  'leather and lace':315,
-  'let it be':25,
-  'let it ride':407,
-  'let\'s dance':301,
-  'levon':325,
-  'life in the fast lane':297,
-  'life\'s been good':371,
-  'light my fire':126,
-  'like a rock':305,
-  'like a rolling stone':120,
-  'limelight':165,
-  'listen to the music':217,
-  'livin\' on a prayer':87,
-  'livin\' on the edge':387,
-  'livin\' thing':15,
-  'locomotive breath':348,
-  'lola':105,
-  'london calling':298,
-  'long cool woman':158,
-  'lookin\' out my back door':385,
-  'love in an elevator':432,
-  'love is a battlefield':467,
-  'love reign o\'er me':239,
-  'lovin\' touchin\' squeezin\'':229,
-  'low spark of high heeled boys':79,
-  'lucy in the sky with diamonds':328,
-  'lunatic fringe':35,
-  'lyin\' eyes':146,
-  'maggie may':195,
-  'make me smile':223,
-  'mama i\'m coming home':209,
-  'mama kin':423,
-  'man in the box':149,
-  'margaritaville':63,
-  'mary jane\'s last dance':250,
-  'maybe i\'m amazed':280,
-  'me and bobby mcgee':143,
-  'me and julio':363,
-  'melissa':90,
-  'message in a bottle':102,
-  'midnight rider':97,
-  'miss you':262,
-  'misty mountain hop':247,
-  'modern love':437,
-  'mona lisas and mad hatters':377,
-  'money':194,
-  'money for nothing':110,
-  'money talks':340,
-  'more than a feeling':36,
-  'mother\'s little helper':257,
-  'movin\' out':176,
-  'moving in stereo':173,
-  'mr. blue sky':50,
-  'mr. jones':404,
-  'my hero':317,
-  'need you tonight':365,
-  'new kid in town':479,
-  'night moves':235,
-  'night they drove old dixie down':331,
-  'nights in white satin':83,
-  'no more mr nice guy':269,
-  'no surrender':156,
-  'nobody\'s fool':172,
-  'nothing else matters':285,
-  'old man':475,
-  'old time rock and roll':400,
-  'once bitten twice shy':316,
-  'one':476,
-  'one bourbon one scotch one beer':454,
-  'one way or another':366,
-  'only the good die young':137,
-  'only time will tell':411,
-  'out in the street':142,
-  'over the hills and far away':169,
-  'owner of a lonely heart':396,
-  'paint it black':253,
-  'panama':47,
-  'paradise by the dashboard light':7,
-  'paranoid':100,
-  'peace of mind':221,
-  'peaceful easy feeling':107,
-  'penny lane':431,
-  'philadelphia freedom':330,
-  'photograph':492,
-  'piano man':31,
-  'pinball wizard':213,
-  'plush':313,
-  'pour some sugar on me':440,
-  'power of love':93,
-  'prelude angry young man':144,
-  'promises in the dark':227,
-  'question':444,
-  'questions 67 and 68':108,
-  'radar love':242,
-  'radio gaga':193,
-  'ramble on':248,
-  'ramblin\' man':197,
-  'rebel rebel':244,
-  'rebel yell':355,
-  'reeling in the years':237,
-  'revival':490,
-  'ride captain ride':491,
-  'riders on the storm':198,
-  'right now':403,
-  'ripple':203,
-  'roadhouse blues':155,
-  'rock and roll':29,
-  'rock and roll all nite':450,
-  'rock and roll band':190,
-  'rock and roll hoochie koo':154,
-  'rock n roll fantasy':289,
-  'rock of ages':258,
-  'rock the casbah':499,
-  'rockin\' in the free world':321,
-  'roll with the changes':477,
-  'rosalita':72,
-  'roundabout':94,
-  'ruby tuesday':446,
-  'run to you':322,
-  'runnin\' down a dream':368,
-  'runnin\' with the devil':452,
-  'running on empty':113,
-  'same old song and dance':238,
-  'satisfaction':148,
-  'saturday in the park':138,
-  'scenes from an italian restaurant':60,
-  'school\'s out':191,
-  'separate ways':38,
-  'sgt pepper':256,
-  'shadows of the night':336,
-  'shake it up':425,
-  'shakedown street':33,
-  'sharp dressed man':367,
-  'she\'s a rainbow':99,
-  'shine':494,
-  'shooting star':65,
-  'show me the way':339,
-  'silver blue and gold':49,
-  'silver springs':214,
-  'simple man':37,
-  'sister golden hair':318,
-  'slow ride':118,
-  'smells like teen spirit':8,
-  'smoke on the water':151,
-  'smokin\'':225,
-  'solsbury hill':245,
-  'someone saved my life tonight':292,
-  'something':207,
-  'southern cross':236,
-  'space oddity':52,
-  'squeezebox':5,
-  'squonk':264,
-  'stairway to heaven':1,
-  'stop draggin\' my heart around':343,
-  'straight on':488,
-  'strawberry fields forever':265,
-  'subdivisions':69,
-  'suffragette city':382,
-  'sugar magnolia':346,
-  'suite judy blue eyes':153,
-  'sultans of swing':42,
-  'summer of \'69':159,
-  'sunshine of your love':350,
-  'superman':268,
-  'surrender':485,
-  'sweet child o\' mine':74,
-  'sweet emotion':54,
-  'sweet home alabama':133,
-  'sympathy for the devil':2,
-  't.n.t.':428,
-  'take it easy':101,
-  'take it on the run':373,
-  'take the long way home':388,
-  'takin\' care of business':372,
-  'tangled up in blue':240,
-  'teach your children':486,
-  'tempted':405,
-  'that smell':216,
-  'the boys are back in town':422,
-  'the chain':53,
-  'the load out':212,
-  'the ocean':356,
-  'the spirit of radio':175,
-  'the stroke':117,
-  'the voice':309,
-  'the weight':58,
-  'these dreams':413,
-  'thunder road':27,
-  'thunderstruck':22,
-  'time':302,
-  'tiny dancer':119,
-  'tom sawyer':128,
-  'touch me':480,
-  'touch of grey':163,
-  'tuesday afternoon':224,
-  'tuesday\'s gone':171,
-  'tumbling dice':320,
-  'tusk':231,
-  'twilight zone':167,
-  'twist and shout':186,
-  'twisting by the pool':278,
-  'two tickets to paradise':358,
-  'unchained':40,
-  'uncle john\'s band':160,
-  'under pressure':152,
-  'up on cripple creek':71,
-  'us and them':312,
-  'ventura highway':124,
-  'waiting on a friend':127,
-  'walk this way':199,
-  'wanted dead or alive':177,
-  'we didn\'t start the fire':293,
-  'we gotta get out of this place':205,
-  'we\'re an american band':251,
-  'welcome to the machine':442,
-  'werewolves of london':184,
-  'what is and what should never be':243,
-  'what it takes':493,
-  'when the levee breaks':112,
-  'where the streets have no name':232,
-  'while my guitar gently weeps':45,
-  'while you see a chance':438,
-  'whipping post':76,
-  'white rabbit':132,
-  'white room':286,
-  'who are you':206,
-  'who do you love':121,
-  'who\'ll stop the rain':456,
-  'whole lotta love':75,
-  'why can\'t this be love':390,
-  'wild horses':246,
-  'wish you were here':39,
-  'witchy woman':408,
-  'woman from tokyo':319,
-  'won\'t get fooled again':41,
-  'wonderful tonight':116,
-  'working man':357,
-  'would':284,
-  'you ain\'t seen nothing yet':496,
-  'you can\'t always get what you want':98,
-  'you give love a bad name':393,
-  'you got another thing coming':353,
-  'you make lovin\' fun':374,
-  'you really got me':308,
-  'you shook me all night long':62,
-  'you took the words right out of my mouth':26,
-  'you\'re my best friend':429,
-  'young americans':439,
-  'your love':457,
-  'your song':406,
-  'your wildest dreams':129,
-  'zevon lawyers guns and money':56,
-  'ziggy stardust':183
-};
-
-function showHistoricalRanking(song) {
-  const el = document.getElementById('np-ranking');
-  const txt = document.getElementById('np-ranking-text');
-  if (!el || !txt) return;
-  const key = song.toLowerCase().trim().replace(/\s+/g,' ');
-  const rank = PHILLY_2025[key];
-  if (rank) {
-    const arrow = rank <= 10 ? '🏆' : rank <= 50 ? '⭐' : rank <= 100 ? '🔥' : '📍';
-    txt.textContent = arrow + ' 2025 Philly 500: #' + rank + ' of 500';
-    el.style.color = 'var(--amber)';
-  } else {
-    txt.textContent = '🆕 Not ranked in 2025 — possible new entry!';
-    el.style.color = 'var(--muted)';
-  }
-  el.style.display = 'block';
-}
-
-
-// HTTP polling fallback - fetch songs directly every 10 seconds
-const SERVER = 'https://wmgk-server-production.up.railway.app';
-let lastSongCount = 0;
-
-let lastSong = '';
-async function pollServer() {
-  try {
-    const r = await fetch(SERVER + '/health');
-    const data = await r.json();
-    if (data.currentPosition != null) updatePosition(data.currentPosition);
-    // Always update now playing if song changed
-    if (data.current && data.current.song !== lastSong) {
-      lastSong = data.current.song;
-      renderNowPlaying(data.current);
-    }
-    // Fetch full song list if count changed
-    if (data.sessionSongs !== lastSongCount) {
-      lastSongCount = data.sessionSongs;
-      const r2 = await fetch(SERVER + '/songs');
-      const newSongs = await r2.json();
-      if (newSongs.length > 0) { songs = newSongs; renderAll(); }
-    }
-  } catch(e) { console.log('poll error', e.message); }
-}
-
-// Poll every 10 seconds
-setInterval(pollServer, 10000);
-pollServer(); // Run immediately on load
-
 </script>
 </body>
 </html>
