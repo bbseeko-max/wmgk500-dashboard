@@ -74,6 +74,16 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 .countdown-num{font-family:var(--display);font-size:48px;line-height:1;color:var(--amber);letter-spacing:2px;}
 .countdown-unit-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
 .countdown-sep{font-family:var(--display);font-size:48px;color:var(--amber-dim);line-height:1;padding-top:0;}
+
+.top-artists-section{padding:24px 20px;border-bottom:1px solid var(--border);background:var(--surface);}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.top-artists-grid{display:flex;flex-direction:column;gap:10px;max-width:700px;margin:0 auto;}
+.artist-row{display:grid;grid-template-columns:40px 160px 1fr 40px;gap:12px;align-items:center;}
+.artist-rank{font-family:var(--mono);font-size:11px;color:var(--amber);text-align:center;}
+.artist-name{font-family:var(--sans);font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.artist-bar-wrap{height:8px;background:var(--border);border-radius:2px;overflow:hidden;}
+.artist-bar{height:100%;background:var(--amber);border-radius:2px;transition:width 1s cubic-bezier(0.22,1,0.36,1);}
+.artist-count{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right;}
 </style>
 </head>
 <body>
@@ -119,6 +129,73 @@ tr:hover td{background:rgba(255,255,255,0.02);}
   <div class="stat"><div class="stat-val" id="stat-avgyear">—</div><div class="stat-label">Avg Year</div></div>
   <div class="stat"><div class="stat-val">4</div><div class="stat-label">Days</div></div>
   <div class="stat"><div class="stat-val">149</div><div class="stat-label">Unique Artists</div></div>
+</div>
+
+
+<div class="top-artists-section">
+  <div class="section-label">Top Artists — 2026 Philly 500</div>
+  <div class="top-artists-grid">
+    <div class="artist-row">
+      <div class="artist-rank">🥇</div>
+      <div class="artist-name">Beatles</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:100%"></div></div>
+      <div class="artist-count">24×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">🥈</div>
+      <div class="artist-name">Led Zeppelin</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:88%"></div></div>
+      <div class="artist-count">21×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">🥉</div>
+      <div class="artist-name">Rolling Stones</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:67%"></div></div>
+      <div class="artist-count">16×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">#4</div>
+      <div class="artist-name">Bruce Springsteen</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:67%"></div></div>
+      <div class="artist-count">16×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">#5</div>
+      <div class="artist-name">AC/DC</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:46%"></div></div>
+      <div class="artist-count">11×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">#6</div>
+      <div class="artist-name">Fleetwood Mac</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:46%"></div></div>
+      <div class="artist-count">11×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">#7</div>
+      <div class="artist-name">Billy Joel</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:46%"></div></div>
+      <div class="artist-count">11×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">#8</div>
+      <div class="artist-name">Elton John</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:42%"></div></div>
+      <div class="artist-count">10×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">#9</div>
+      <div class="artist-name">Pink Floyd</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:38%"></div></div>
+      <div class="artist-count">9×</div>
+    </div>
+    <div class="artist-row">
+      <div class="artist-rank">#10</div>
+      <div class="artist-name">Van Halen</div>
+      <div class="artist-bar-wrap"><div class="artist-bar" style="width:38%"></div></div>
+      <div class="artist-count">9×</div>
+    </div>
+  </div>
 </div>
 
 <div class="controls">
