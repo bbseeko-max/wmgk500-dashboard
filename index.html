@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>102.9 MGK — Philly 500</title>
+<title>102.9 MGK — Philly 500 2026 Results</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -13,623 +13,234 @@
   --red:#e84040;--green:#3ecf6a;--text:#f0ede6;--muted:#7a7670;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--display:'Bebas Neue',sans-serif;
 }
-body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
 
-/* OVERLAYS */
-.overlay{position:fixed;inset:0;background:rgba(14,14,14,0.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:100;}
-.overlay.hidden{display:none;}
-.ov-title{font-family:var(--display);font-size:48px;color:var(--amber);letter-spacing:4px;}
-.ov-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;}
-.ov-input{font-family:var(--mono);font-size:32px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:10px 20px;width:140px;text-align:center;outline:none;}
-.ov-input:focus{border-color:var(--amber);}
-.ov-btn{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--bg);background:var(--amber);border:none;border-radius:4px;padding:14px 24px;cursor:pointer;text-transform:uppercase;}
-.ov-btn:hover{background:#f0b030;}
-.ov-btn.secondary{background:var(--surface);color:var(--amber);border:1px solid var(--amber-dim);}
-.ov-note{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;}
-.ov-err{font-family:var(--mono);font-size:11px;color:var(--red);letter-spacing:1px;}
-
-/* PAUSE BANNER */
-.pause-banner{background:rgba(232,160,32,0.08);border-bottom:2px solid var(--amber-dim);padding:16px 24px;text-align:center;display:none;}
-.pause-banner.show{display:block;}
-.pause-banner-text{font-family:var(--display);font-size:28px;color:var(--amber);letter-spacing:3px;}
-.pause-banner-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
-
-/* TOPBAR */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface);gap:12px;flex-wrap:wrap;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface);}
 .logos{display:flex;align-items:center;gap:12px;}
 .logos img{height:38px;object-fit:contain;}
-.topbar-center{display:flex;gap:16px;align-items:center;}
-.live-badge{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--red);}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(232,64,64,0.5)}50%{opacity:0.7;box-shadow:0 0 0 5px rgba(232,64,64,0)}}
-.ws-badge{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:2px;border:1px solid var(--border);color:var(--muted);}
-.ws-badge.ok{color:var(--green);border-color:var(--green);}
-.ws-badge.err{color:var(--red);border-color:var(--red);}
-.ws-badge.connecting{color:var(--amber);border-color:var(--amber-dim);animation:pulse-a 1s infinite;}
-@keyframes pulse-a{0%,100%{opacity:1}50%{opacity:0.4}}
-.clock{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.op-btn{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:4px 10px;border-radius:2px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;text-transform:uppercase;}
-.op-btn:hover{border-color:var(--amber);color:var(--amber);}
-.op-btn.danger{border-color:var(--amber-dim);color:var(--amber);}
-.op-btn.pause-btn{border-color:var(--red);color:var(--red);}
-.op-btn.resume-btn{border-color:var(--green);color:var(--green);}
-.op-controls{display:none;align-items:center;gap:8px;}
-.op-controls.show{display:flex;}
+.topbar-title{font-family:var(--display);font-size:22px;color:var(--amber);letter-spacing:3px;}
+.topbar-sub{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;}
 
-/* POSITION BANNER */
-.pos-banner{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
-.pos-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
-.pos-number{font-family:var(--display);font-size:96px;line-height:1;color:var(--amber);letter-spacing:2px;text-shadow:0 0 60px var(--amber-glow);transition:all 0.5s;}
-.pos-of{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.pos-divider{width:1px;height:70px;background:var(--border);}
-.pos-stats{display:flex;gap:28px;}
-.pos-stat-val{font-family:var(--display);font-size:30px;color:var(--text);line-height:1;}
-.pos-stat-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
-.pos-right{margin-left:auto;text-align:right;}
-.pos-event{font-family:var(--display);font-size:24px;color:var(--amber);letter-spacing:2px;}
-.pos-event-sub{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
-.pos-session{font-family:var(--mono);font-size:10px;color:var(--amber);margin-top:4px;}
+.hero{background:var(--surface);border-bottom:2px solid var(--amber-dim);padding:30px 20px;text-align:center;}
+.hero-title{font-family:var(--display);font-size:72px;color:var(--amber);letter-spacing:6px;line-height:1;}
+.hero-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:3px;margin-top:8px;}
+.hero-winner{margin-top:20px;padding:16px 24px;background:var(--amber-glow);border:1px solid var(--amber-dim);border-radius:4px;display:inline-block;}
+.winner-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.winner-song{font-family:var(--display);font-size:40px;color:var(--amber);letter-spacing:2px;margin-top:4px;}
+.winner-artist{font-family:var(--sans);font-size:16px;color:var(--text);margin-top:4px;}
 
-/* MAIN LAYOUT */
-.main{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 200px);}
-.left-col{padding:16px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:16px;}
-.right-col{padding:16px 14px;display:flex;flex-direction:column;gap:16px;background:var(--surface);overflow-y:auto;}
+.stats-bar{display:flex;gap:40px;padding:16px 20px;border-bottom:1px solid var(--border);justify-content:center;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-val{font-family:var(--display);font-size:32px;color:var(--text);}
+.stat-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
 
-/* NOW PLAYING */
-.np-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.np-label{padding:9px 14px 7px;font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;justify-content:space-between;}
-.np-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse-amber 2s ease-in-out infinite;flex-shrink:0;}
-@keyframes pulse-amber{0%,100%{opacity:1}50%{opacity:0.3}}
-.np-pos-pill{font-family:var(--display);font-size:14px;color:var(--amber-dim);background:rgba(232,160,32,0.08);padding:2px 10px;border-radius:2px;border:1px solid var(--amber-dim);}
-.np-body{padding:16px 14px 10px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;}
-.np-song{font-family:var(--display);font-size:40px;line-height:0.95;letter-spacing:1px;color:var(--text);}
-.np-artist{font-family:var(--sans);font-size:15px;font-weight:400;color:var(--amber);margin-top:8px;}
-.np-meta{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:5px;display:flex;gap:14px;flex-wrap:wrap;}
-.np-meta span{color:var(--text);}
-.np-year-big{font-family:var(--display);font-size:56px;line-height:1;color:var(--amber-dim);letter-spacing:2px;text-shadow:0 0 30px var(--amber-glow);}
-.np-decade{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-align:right;margin-top:2px;}
-.vu-row{padding:0 14px 12px;display:flex;gap:2px;align-items:flex-end;height:28px;}
-.vu-bar{width:5px;border-radius:1px;background:var(--amber);transition:height 0.1s ease;}
+.controls{padding:12px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.search-input{font-family:var(--mono);font-size:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:2px;width:240px;outline:none;}
+.search-input:focus{border-color:var(--amber);}
+.filter-btn{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:5px 12px;border-radius:2px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;text-transform:uppercase;}
+.filter-btn.active{border-color:var(--amber);color:var(--amber);background:var(--amber-glow);}
+.results-count{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto;}
 
-/* COMMERCIAL */
-.comm-banner{background:rgba(232,160,32,0.06);border:1px solid var(--amber-dim);border-radius:4px;padding:14px 18px;text-align:center;display:none;}
-.comm-banner.show{display:block;}
-.comm-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--amber);text-transform:uppercase;}
-.comm-sub{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:4px;}
+.song-list{max-width:100%;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead{position:sticky;top:0;background:var(--surface);z-index:10;}
+th{font-family:var(--mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);}
+th.sortable{cursor:pointer;}
+th.sortable:hover{color:var(--amber);}
+td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.pos{font-family:var(--display);font-size:20px;color:var(--amber-dim);width:60px;}
+.pos.top10{color:var(--amber);}
+.pos.top50{color:#c88010;}
+.song-title{font-family:var(--sans);font-size:13px;font-weight:500;}
+.song-artist{font-family:var(--sans);font-size:11px;color:var(--muted);font-style:italic;margin-top:2px;}
+.day-badge{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:2px;border:1px solid var(--border);color:var(--muted);white-space:nowrap;}
+.day-fri{border-color:#3a6a3a;color:#3ecf6a;}
+.day-sat{border-color:#3a4a7a;color:#7ab0ff;}
+.day-sun{border-color:#6a3a7a;color:#c07aff;}
+.day-mon{border-color:var(--amber-dim);color:var(--amber);}
+.time-cell{font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap;}
+.not-captured{color:var(--border);font-style:italic;}
 
-/* SECTION */
-.section-head{font-family:var(--mono);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;}
-.section-count{color:var(--amber);}
+@media(max-width:600px){
+  .hero-title{font-size:48px;}
+  th:nth-child(4),td:nth-child(4){display:none;}
+}
 
-/* RECENT */
-.recent-list{display:flex;flex-direction:column;gap:1px;max-height:340px;overflow-y:auto;}
-.recent-list::-webkit-scrollbar{width:3px;}
-.recent-list::-webkit-scrollbar-thumb{background:var(--border);}
-.recent-item{display:grid;grid-template-columns:40px 1fr auto;gap:8px;align-items:center;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:2px;}
-.recent-item.new{animation:flashin 1.5s ease;}
-@keyframes flashin{0%{background:rgba(232,160,32,0.12);border-color:var(--amber-dim)}100%{background:var(--surface);border-color:var(--border)}}
-.recent-pos{font-family:var(--display);font-size:17px;color:var(--amber-dim);text-align:center;}
-.recent-title{font-family:var(--sans);font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.recent-artist{font-family:var(--sans);font-size:10px;color:var(--muted);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.recent-time{font-family:var(--mono);font-size:9px;color:var(--muted);text-align:right;flex-shrink:0;}
-.empty-state{font-family:var(--mono);font-size:10px;color:var(--muted);padding:16px 0;text-align:center;letter-spacing:1px;}
-
-/* RIGHT PANEL */
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.stat-tile{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:9px 10px;}
-.stat-label{font-family:var(--mono);font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
-.stat-value{font-family:var(--display);font-size:28px;line-height:1;color:var(--text);}
-.stat-sub{font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.divider{border:none;border-top:1px solid var(--border);}
-.decade-chart{display:flex;flex-direction:column;gap:7px;}
-.decade-row{display:grid;grid-template-columns:42px 1fr 28px;gap:6px;align-items:center;}
-.decade-label{font-family:var(--mono);font-size:9px;color:var(--muted);}
-.decade-track{height:7px;background:var(--border);border-radius:1px;overflow:hidden;}
-.decade-fill{height:100%;border-radius:1px;background:var(--amber);transition:width 0.8s cubic-bezier(0.22,1,0.36,1);}
-.decade-count{font-family:var(--mono);font-size:9px;color:var(--muted);text-align:right;}
-.artist-list{display:flex;flex-direction:column;gap:3px;}
-.artist-row{display:grid;grid-template-columns:18px 1fr auto;gap:6px;align-items:center;padding:5px 6px;border-radius:2px;}
-.artist-row:hover{background:var(--bg);}
-.artist-rank{font-family:var(--mono);font-size:8px;color:var(--amber-dim);text-align:center;}
-.artist-name{font-family:var(--sans);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.artist-plays{font-family:var(--mono);font-size:9px;color:var(--muted);padding:1px 5px;background:var(--border);border-radius:8px;flex-shrink:0;}
-
-.fun-facts-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;display:none;}
-.fun-facts-card.show{display:block;}
-.fun-facts-label{padding:9px 14px 7px;font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-.fun-facts-label::before{content:'★';color:var(--amber);}
-.fun-facts-list{padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
-.fun-fact-item{font-family:var(--sans);font-size:13px;color:var(--text);line-height:1.6;padding-left:12px;border-left:2px solid var(--amber-dim);}
+.countdown-bar{background:var(--surface);border-bottom:2px solid var(--amber-dim);padding:14px 20px;text-align:center;}
+.countdown-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+.countdown-timer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;}
+.countdown-unit{text-align:center;}
+.countdown-num{font-family:var(--display);font-size:48px;line-height:1;color:var(--amber);letter-spacing:2px;}
+.countdown-unit-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.countdown-sep{font-family:var(--display);font-size:48px;color:var(--amber-dim);line-height:1;padding-top:0;}
 </style>
 </head>
 <body>
 
-<!-- PIN OVERLAY -->
-<div class="overlay" id="pin-overlay">
-  <div class="ov-title">PHILLY 500</div>
-  <div class="ov-sub">102.9 MGK — OPERATOR ACCESS</div>
-  <input class="ov-input" type="password" id="pin-input" placeholder="PIN" maxlength="4" onkeydown="if(event.key==='Enter')checkPin()">
-  <div class="ov-err" id="pin-err" style="display:none">Incorrect PIN</div>
-  <button class="ov-btn" onclick="checkPin()">ENTER</button>
-  <button class="ov-btn secondary" onclick="skipPin()">VIEW ONLY</button>
-  <div class="ov-note">Operators: enter PIN to access controls · Guests: view only</div>
-</div>
-
-<!-- START SESSION OVERLAY -->
-<div class="overlay hidden" id="start-overlay">
-  <div class="ov-title">START SESSION</div>
-  <div class="ov-sub">SET STARTING POSITION</div>
-  <input class="ov-input" type="number" id="start-pos" value="500" min="1" max="500">
-  <button class="ov-btn" onclick="startSession()">BEGIN COUNTDOWN</button>
-  <button class="ov-btn secondary" onclick="resumeFromServer()">RESUME EXISTING SESSION</button>
-  <div class="ov-note">Set 500 at countdown start · or enter current position if rejoining</div>
-</div>
-
-<!-- PAUSE BANNER -->
-<div class="pause-banner" id="pause-banner">
-  <div class="pause-banner-text">⏸ COUNTDOWN PAUSED</div>
-  <div class="pause-banner-sub">Resuming tomorrow — all metrics preserved</div>
-</div>
-
-<!-- TOP BAR -->
 <div class="topbar">
   <div class="logos">
     <img src="https://wmgk.com/uploads/2015/03/wmgk.png" alt="102.9 MGK" onerror="this.style.display='none'">
     <img src="https://wmgk.com/uploads/2023/05/Philly-500-1200-%C3%97-630-px.jpg" alt="Philly 500" onerror="this.style.display='none'">
   </div>
-  <div class="topbar-center">
-    <div class="live-badge"><div class="live-dot"></div>PHILLY 500</div>
-    <div class="ws-badge connecting" id="ws-badge">CONNECTING</div>
-    <!-- Operator controls — hidden until PIN entered -->
-    <div class="op-controls" id="op-controls">
-      <button class="op-btn" id="btn-start" onclick="showStartOverlay()">SET POSITION</button>
-      <button class="op-btn pause-btn" id="btn-pause" onclick="doPause()">⏸ PAUSE</button>
-      <button class="op-btn resume-btn" id="btn-resume" onclick="doResume()" style="display:none">▶ RESUME</button>
-      <button class="op-btn" onclick="doAdjust(1)">+1</button>
-      <button class="op-btn" onclick="doAdjust(-1)">-1</button>
-    </div>
-  </div>
-  <div class="clock" id="clock">--:-- --</div>
-</div>
-
-<!-- POSITION BANNER -->
-<div class="pos-banner">
-  <div>
-    <div class="pos-label">Current Position</div>
-    <div class="pos-number" id="pos-number">—</div>
-    <div class="pos-of">of 500</div>
-  </div>
-  <div class="pos-divider"></div>
-  <div class="pos-stats">
-    <div>
-      <div class="pos-stat-val" id="stat-played">0</div>
-      <div class="pos-stat-label">Songs Played</div>
-    </div>
-    <div>
-      <div class="pos-stat-val" id="stat-remaining">—</div>
-      <div class="pos-stat-label">Remaining</div>
-    </div>
-    <div>
-      <div class="pos-stat-val" id="stat-unique">0</div>
-      <div class="pos-stat-label">Artists</div>
-    </div>
-    <div>
-      <div class="pos-stat-val" id="stat-avg-year">—</div>
-      <div class="pos-stat-label">Avg Year</div>
-    </div>
-  </div>
-  <div class="pos-right">
-    <div class="pos-event">PHILLY 500</div>
-    <div class="pos-event-sub">MEMORIAL DAY WEEKEND 2026</div>
-    <div class="pos-session" id="session-time">—</div>
+  <div style="text-align:right">
+    <div class="topbar-title">2026 RESULTS</div>
+    <div class="topbar-sub">Memorial Day Weekend · May 22–25, 2026</div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-  <div class="left-col">
-
-    <div class="comm-banner" id="comm-banner">
-      <div class="comm-label">⏸ Commercial Break</div>
-      <div class="comm-sub">Next countdown song coming up...</div>
-    </div>
-
-    <div class="np-card">
-      <div class="np-label">
-        <span>Now Playing</span>
-        <span class="np-pos-pill" id="np-pos-pill">—</span>
-      </div>
-      <div class="np-body">
-        <div>
-          <div class="np-song" id="np-song">Waiting for countdown...</div>
-          <div class="np-artist" id="np-artist">—</div>
-          <div class="np-meta">
-            Album: <span id="np-album">—</span> &nbsp;
-            Elapsed: <span id="np-elapsed">—</span>
-          </div>
-        </div>
-        <div style="text-align:right">
-          <div class="np-year-big" id="np-year">—</div>
-          <div class="np-decade" id="np-decade">—</div>
-        </div>
-      </div>
-      <div class="vu-row" id="vu-row"></div>
-    </div>
-
-
-    <div class="fun-facts-card" id="fun-facts-card">
-      <div class="fun-facts-label">Did You Know?</div>
-      <div class="fun-facts-list" id="fun-facts-list"></div>
-    </div>
-
-    <div>
-      <div class="section-head">
-        Played This Session
-        <span class="section-count" id="recent-count">0 songs</span>
-      </div>
-      <div class="recent-list" id="recent-list">
-        <div class="empty-state">No songs yet this session</div>
-      </div>
-    </div>
-
+<div class="hero">
+  <div class="hero-title">PHILLY 500</div>
+  <div class="hero-sub">2026 · Complete Results · 500 Songs · 4 Days</div>
+  <div class="hero-winner">
+    <div class="winner-label">🏆 #1 Song of 2026</div>
+    <div class="winner-song">BABA O'RILEY</div>
+    <div class="winner-artist">The Who · Monday May 25 at 6:09 PM</div>
   </div>
+</div>
 
-  <div class="right-col">
-    <div>
-      <div class="section-head">Countdown Stats</div>
-      <div class="stat-grid">
-        <div class="stat-tile">
-          <div class="stat-label">Songs</div>
-          <div class="stat-value" id="r-songs">0</div>
-          <div class="stat-sub">this session</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Artists</div>
-          <div class="stat-value" id="r-artists">0</div>
-          <div class="stat-sub">unique</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Avg Year</div>
-          <div class="stat-value" id="r-year">—</div>
-          <div class="stat-sub">release</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Top Artist</div>
-          <div class="stat-value" style="font-size:13px;padding-top:6px" id="r-top">—</div>
-          <div class="stat-sub" id="r-top-plays">—</div>
-        </div>
-      </div>
-    </div>
-    <hr class="divider">
-    <div>
-      <div class="section-head">Decade Breakdown</div>
-      <div class="decade-chart" id="decade-chart">
-        <div class="empty-state" style="padding:8px 0">No data yet</div>
-      </div>
-    </div>
-    <hr class="divider">
-    <div>
-      <div class="section-head">Top Artists <span class="section-count" id="artist-count"></span></div>
-      <div class="artist-list" id="artist-list">
-        <div class="empty-state" style="padding:6px 0">No data yet</div>
-      </div>
-    </div>
+
+<div class="countdown-bar">
+  <div class="countdown-label">⏱ Next Philly 500 Begins — Friday May 28, 2027 at 2:00 PM ET</div>
+  <div class="countdown-timer">
+    <div class="countdown-unit"><div class="countdown-num" id="cd-days">—</div><div class="countdown-unit-label">Days</div></div>
+    <div class="countdown-sep">:</div>
+    <div class="countdown-unit"><div class="countdown-num" id="cd-hours">—</div><div class="countdown-unit-label">Hours</div></div>
+    <div class="countdown-sep">:</div>
+    <div class="countdown-unit"><div class="countdown-num" id="cd-mins">—</div><div class="countdown-unit-label">Minutes</div></div>
+    <div class="countdown-sep">:</div>
+    <div class="countdown-unit"><div class="countdown-num" id="cd-secs">—</div><div class="countdown-unit-label">Seconds</div></div>
   </div>
+</div>
+
+<div class="stats-bar" id="stats-bar">
+  <div class="stat"><div class="stat-val" id="stat-total">500</div><div class="stat-label">Songs</div></div>
+  <div class="stat"><div class="stat-val" id="stat-artists">—</div><div class="stat-label">Artists</div></div>
+  <div class="stat"><div class="stat-val" id="stat-avgyear">—</div><div class="stat-label">Avg Year</div></div>
+  <div class="stat"><div class="stat-val">4</div><div class="stat-label">Days</div></div>
+  <div class="stat"><div class="stat-val">149</div><div class="stat-label">Unique Artists</div></div>
+</div>
+
+<div class="controls">
+  <input class="search-input" id="search" placeholder="Search songs or artists..." oninput="filterSongs()">
+  <button class="filter-btn active" id="btn-all" onclick="setDay('all')">All Days</button>
+  <button class="filter-btn" id="btn-fri" onclick="setDay('Fri')">Fri May 22</button>
+  <button class="filter-btn" id="btn-sat" onclick="setDay('Sat')">Sat May 23</button>
+  <button class="filter-btn" id="btn-sun" onclick="setDay('Sun')">Sun May 24</button>
+  <button class="filter-btn" id="btn-mon" onclick="setDay('Mon')">Mon May 25</button>
+  <div class="results-count" id="results-count">500 songs</div>
+</div>
+
+<div class="song-list">
+  <table>
+    <thead>
+      <tr>
+        <th class="sortable" onclick="sortBy('pos')">#</th>
+        <th>Song / Artist</th>
+        <th class="sortable" onclick="sortBy('day')">Day</th>
+        <th>Time (ET)</th>
+      </tr>
+    </thead>
+    <tbody id="song-tbody"></tbody>
+  </table>
 </div>
 
 <script>
-const WS_URL     = 'wss://wmgk-server-production.up.railway.app';
-const SERVER_URL = 'https://wmgk-server-production.up.railway.app';
-const OPERATOR_PIN = '1776';
-const DISPLAY_DELAY_MS = 25000;
+const SONGS = [{"official_position":1,"song":"BABA  O'RILEY","artist":"Who","day":"Mon May 25","time_et":"6:09 PM","fetchedAt":"2026-05-25T22:09:23.428Z","startTime":"2026-05-25T22:09:03.704Z","album":"Who\u2019s Next | Life House","year":2023},{"official_position":2,"song":"COMFORTABLY NUMB","artist":"Pink Floyd","day":"Mon May 25","time_et":"6:01 PM","fetchedAt":"2026-05-25T22:01:43.353Z","startTime":"2026-05-25T22:01:30.398Z","album":"The Wall","year":1984},{"official_position":3,"song":"Sympathy For The Devil","artist":"ROLLING STONES","day":"Mon May 25","time_et":"5:47 PM","fetchedAt":"2026-05-25T21:47:53.214Z","startTime":"2026-05-25T21:47:37.752Z","album":"Better Than the Real Rebirth","year":2000},{"official_position":4,"song":"DO YOU FEEL LIKE WE DO?","artist":"PETER FRAMPTON","day":"Mon May 25","time_et":"5:34 PM","fetchedAt":"2026-05-25T21:34:13.121Z","startTime":"2026-05-25T21:33:54.314Z","album":"Frampton\u2019s Camel","year":1973},{"official_position":5,"song":"Dance The Night Away","artist":"Van Halen","day":"Mon May 25","time_et":"5:31 PM","fetchedAt":"2026-05-25T21:31:13.066Z","startTime":"2026-05-25T21:30:53.795Z","album":null,"year":null},{"official_position":6,"song":"Squeezebox","artist":"Who","day":"Mon May 25","time_et":"5:21 PM","fetchedAt":"2026-05-25T21:21:22.974Z","startTime":"2026-05-25T21:21:02.346Z","album":"SqueezeBox","year":2000},{"official_position":7,"song":"The Boys Of Summer","artist":"Don Henley","day":"Mon May 25","time_et":"5:16 PM","fetchedAt":"2026-05-25T21:16:42.969Z","startTime":"2026-05-25T21:16:18.282Z","album":"Building the Perfect Beast","year":1984},{"official_position":8,"song":"Stairway To Heaven","artist":"Led Zeppelin","day":"Mon May 25","time_et":"5:08 PM","fetchedAt":"2026-05-25T21:08:12.886Z","startTime":"2026-05-25T21:07:58.521Z","album":null,"year":1971},{"official_position":9,"song":"SMELLS LIKE TEEN SPIRIT","artist":"Nirvana","day":"Mon May 25","time_et":"5:03 PM","fetchedAt":"2026-05-25T21:03:12.824Z","startTime":"2026-05-25T21:02:57.312Z","album":null,"year":1991},{"official_position":10,"song":"Hotel California","artist":"EAGLES","day":"Mon May 25","time_et":"4:56 PM","fetchedAt":"2026-05-25T20:56:42.732Z","startTime":"2026-05-25T20:56:18.861Z","album":null,"year":1976},{"official_position":11,"song":"Crazy On You","artist":"HEART","day":"Mon May 25","time_et":"4:44 PM","fetchedAt":"2026-05-25T20:44:22.614Z","startTime":"2026-05-25T20:44:02.271Z","album":null,"year":1976},{"official_position":12,"song":"Bohemian Rhapsody","artist":"Queen","day":"Mon May 25","time_et":"4:38 PM","fetchedAt":"2026-05-25T20:38:22.567Z","startTime":"2026-05-25T20:38:04.725Z","album":null,"year":1975},{"official_position":13,"song":"LIVIN' ON A PRAYER","artist":"BON JOVI","day":"Mon May 25","time_et":"4:34 PM","fetchedAt":"2026-05-25T20:34:22.597Z","startTime":"2026-05-25T20:33:57.870Z","album":"Slippery When Wet","year":2005},{"official_position":14,"song":"Free Bird","artist":"LYNYRD SKYNYRD","day":"Mon May 25","time_et":"4:16 PM","fetchedAt":"2026-05-25T20:16:52.410Z","startTime":"2026-05-25T20:16:39.926Z","album":null,"year":1973},{"official_position":15,"song":"PARADISE BY THE DASHBOARD LIGHT","artist":"Meat Loaf","day":"Mon May 25","time_et":"4:08 PM","fetchedAt":"2026-05-25T20:08:32.356Z","startTime":"2026-05-25T20:08:21.768Z","album":"Bat Out of Hell","year":2002},{"official_position":16,"song":"Panama","artist":"Van Halen","day":"Mon May 25","time_et":"4:04 PM","fetchedAt":"2026-05-25T20:04:52.226Z","startTime":"2026-05-25T20:04:40.803Z","album":"1984","year":2008},{"official_position":17,"song":"Hey Jude","artist":"Beatles","day":"Mon May 25","time_et":"3:58 PM","fetchedAt":"2026-05-25T19:58:02.189Z","startTime":"2026-05-25T19:57:50.855Z","album":null,"year":1968},{"official_position":18,"song":"25 Or 6 To 4","artist":"CHICAGO","day":"Mon May 25","time_et":"3:46 PM","fetchedAt":"2026-05-25T19:46:52.049Z","startTime":"2026-05-25T19:46:33.226Z","album":null,"year":null},{"official_position":19,"song":"BORN TO RUN","artist":"Bruce Springsteen","day":"Mon May 25","time_et":"3:42 PM","fetchedAt":"2026-05-25T19:42:12.003Z","startTime":"2026-05-25T19:41:56.074Z","album":null,"year":1975},{"official_position":20,"song":"You Took The Words Right Out Of My Mouth","artist":"Meat Loaf","day":"Mon May 25","time_et":"3:38 PM","fetchedAt":"2026-05-25T19:38:01.990Z","startTime":"2026-05-25T19:37:41.733Z","album":null,"year":null},{"official_position":21,"song":"A DAY IN THE LIFE","artist":"BEATLES","day":"Mon May 25","time_et":"3:33 PM","fetchedAt":"2026-05-25T19:33:01.921Z","startTime":"2026-05-25T19:32:47.136Z","album":"Sgt: Peppers Lonely Hearts Club Band Rockband Mixes 2009","year":2009},{"official_position":22,"song":"Hold On Loosely","artist":".38 SPECIAL","day":"Mon May 25","time_et":"3:20 PM","fetchedAt":"2026-05-25T19:20:51.806Z","startTime":"2026-05-25T19:20:33.950Z","album":null,"year":1981},{"official_position":23,"song":"Let It Be","artist":"Beatles","day":"Mon May 25","time_et":"3:16 PM","fetchedAt":"2026-05-25T19:16:51.771Z","startTime":"2026-05-25T19:16:39.963Z","album":null,"year":1970},{"official_position":24,"song":"Against The Wind","artist":"Bob Seger","day":"Mon May 25","time_et":"3:11 PM","fetchedAt":"2026-05-25T19:11:31.720Z","startTime":"2026-05-25T19:11:06.886Z","album":"Against the Wind","year":1980},{"official_position":25,"song":"KASHMIR","artist":"LED ZEPPELIN","day":"Mon May 25","time_et":"3:02 PM","fetchedAt":"2026-05-25T19:02:41.718Z","startTime":"2026-05-25T19:02:30.662Z","album":null,"year":1975},{"official_position":26,"song":"Thunderstruck","artist":"AC/DC","day":"Mon May 25","time_et":"2:57 PM","fetchedAt":"2026-05-25T18:57:51.604Z","startTime":"2026-05-25T18:57:35.027Z","album":"The Razors Edge","year":1991},{"official_position":27,"song":"Simple Man","artist":"LYNYRD SKYNYRD","day":"Mon May 25","time_et":"2:45 PM","fetchedAt":"2026-05-25T18:45:41.491Z","startTime":"2026-05-25T18:45:21.705Z","album":null,"year":1973},{"official_position":28,"song":"Dream On","artist":"Aerosmith","day":"Mon May 25","time_et":"2:41 PM","fetchedAt":"2026-05-25T18:41:11.448Z","startTime":"2026-05-25T18:40:57.882Z","album":null,"year":1973},{"official_position":29,"song":"Dirty Deeds Done Dirt Cheap","artist":"AC/DC","day":"Mon May 25","time_et":"2:37 PM","fetchedAt":"2026-05-25T18:37:21.420Z","startTime":"2026-05-25T18:37:06.848Z","album":null,"year":1976},{"official_position":30,"song":"Wish You Were Here","artist":"Pink Floyd","day":"Mon May 25","time_et":"2:32 PM","fetchedAt":"2026-05-25T18:32:31.398Z","startTime":"2026-05-25T18:32:08.999Z","album":null,"year":1975},{"official_position":31,"song":"Gimme Shelter","artist":"ROLLING STONES","day":"Mon May 25","time_et":"2:19 PM","fetchedAt":"2026-05-25T18:19:11.256Z","startTime":"2026-05-25T18:18:57.540Z","album":"Who The Hate Is Brian Jones","year":1995},{"official_position":32,"song":"Two Out Of Three Ain't Bad","artist":"Meat Loaf","day":"Mon May 25","time_et":"2:14 PM","fetchedAt":"2026-05-25T18:14:01.209Z","startTime":"2026-05-25T18:13:35.761Z","album":null,"year":null},{"official_position":33,"song":"The Heart Of Rock & Roll","artist":"Huey Lewis & The News","day":"Mon May 25","time_et":"2:09 PM","fetchedAt":"2026-05-25T18:09:41.188Z","startTime":"2026-05-25T18:09:24.271Z","album":null,"year":null},{"official_position":34,"song":"FROM THE BEGINNING","artist":"Emerson, Lake & Palmer","day":"Mon May 25","time_et":"2:05 PM","fetchedAt":"2026-05-25T18:05:31.153Z","startTime":"2026-05-25T18:05:07.307Z","album":null,"year":null},{"official_position":35,"song":"TUESDAY'S GONE","artist":"LYNYRD SKYNYRD","day":"Mon May 25","time_et":"1:57 PM","fetchedAt":"2026-05-25T17:57:51.054Z","startTime":"2026-05-25T17:57:34.573Z","album":"(pronounced \u2019l\u0115h\u2010\u2019n\u00e9rd \u2019skin\u2010\u2019n\u00e9rd)","year":1973},{"official_position":36,"song":"Back In Black","artist":"AC/DC","day":"Mon May 25","time_et":"1:47 PM","fetchedAt":"2026-05-25T17:47:00.971Z","startTime":"2026-05-25T17:46:42.133Z","album":null,"year":1980},{"official_position":37,"song":"Landslide","artist":"FLEETWOOD MAC","day":"Mon May 25","time_et":"1:43 PM","fetchedAt":"2026-05-25T17:43:30.947Z","startTime":"2026-05-25T17:43:15.888Z","album":"Fleetwood Mac","year":1975},{"official_position":38,"song":"GOLDEN SLUMBERS MEDLEY","artist":"Beatles","day":"Mon May 25","time_et":"1:37 PM","fetchedAt":"2026-05-25T17:37:30.924Z","startTime":"2026-05-25T17:37:17.111Z","album":"Reunions 74 & 92","year":1992},{"official_position":39,"song":"SHAKEDOWN STREET","artist":"Grateful Dead","day":"Mon May 25","time_et":"1:32 PM","fetchedAt":"2026-05-25T17:32:30.876Z","startTime":"2026-05-25T17:32:14.788Z","album":"1985-09-07 - Red Rocks Amphitheatre","year":1998},{"official_position":40,"song":"(DON'T FEAR) THE REAPER","artist":"Blue Oyster Cult","day":"Mon May 25","time_et":"1:19 PM","fetchedAt":"2026-05-25T17:19:20.717Z","startTime":"2026-05-25T17:19:07.916Z","album":null,"year":1976},{"official_position":41,"song":"MIDNIGHT RIDER","artist":"Allman Brothers Band","day":"Mon May 25","time_et":"1:16 PM","fetchedAt":"2026-05-25T17:16:20.669Z","startTime":"2026-05-25T17:15:58.884Z","album":null,"year":null},{"official_position":42,"song":"More Than A Feeling","artist":"Boston","day":"Mon May 25","time_et":"1:11 PM","fetchedAt":"2026-05-25T17:11:40.643Z","startTime":"2026-05-25T17:11:22.267Z","album":null,"year":1976},{"official_position":43,"song":"Thunder Road","artist":"Bruce Springsteen","day":"Mon May 25","time_et":"1:06 PM","fetchedAt":"2026-05-25T17:06:50.621Z","startTime":"2026-05-25T17:06:37.704Z","album":null,"year":1975},{"official_position":44,"song":"IT'S A LONG WAY TO THE TOP","artist":"AC/DC","day":"Mon May 25","time_et":"1:01 PM","fetchedAt":"2026-05-25T17:01:30.631Z","startTime":"2026-05-25T17:01:12.544Z","album":null,"year":null},{"official_position":45,"song":"Sultans Of Swing","artist":"Dire Straits","day":"Mon May 25","time_et":"12:55 PM","fetchedAt":"2026-05-25T16:55:50.490Z","startTime":"2026-05-25T16:55:31.969Z","album":null,"year":null},{"official_position":46,"song":"War Pigs","artist":"Black Sabbath","day":"Mon May 25","time_et":"12:40 PM","fetchedAt":"2026-05-25T16:40:40.444Z","startTime":"2026-05-25T16:40:22.299Z","album":"Paranoid: Remixed","year":2023},{"official_position":47,"song":"Piano Man","artist":"Billy Joel","day":"Mon May 25","time_et":"12:35 PM","fetchedAt":"2026-05-25T16:35:00.321Z","startTime":"2026-05-25T16:34:43.127Z","album":null,"year":1973},{"official_position":48,"song":"WANTED DEAD OR ALIVE","artist":"BON JOVI","day":"Mon May 25","time_et":"12:29 PM","fetchedAt":"2026-05-25T16:29:50.422Z","startTime":"2026-05-25T16:29:40.706Z","album":null,"year":1986},{"official_position":49,"song":"In My Life","artist":"Beatles","day":"Mon May 25","time_et":"12:19 PM","fetchedAt":"2026-05-25T16:19:50.286Z","startTime":"2026-05-25T16:19:29.770Z","album":"Rubber Soul","year":1987},{"official_position":50,"song":"While My Guitar Gently Weeps","artist":"Beatles","day":"Mon May 25","time_et":"12:15 PM","fetchedAt":"2026-05-25T16:15:00.202Z","startTime":"2026-05-25T16:14:45.749Z","album":"Reunions 74 & 92","year":1992},{"official_position":51,"song":"Nights In White Satin","artist":"Moody Blues","day":"Mon May 25","time_et":"12:07 PM","fetchedAt":"2026-05-25T16:07:30.143Z","startTime":"2026-05-25T16:07:20.021Z","album":null,"year":null},{"official_position":52,"song":"Take It Easy","artist":"EAGLES","day":"Mon May 25","time_et":"12:04 PM","fetchedAt":"2026-05-25T16:04:10.097Z","startTime":"2026-05-25T16:03:51.265Z","album":null,"year":1972},{"official_position":53,"song":"Godzilla","artist":"Blue Oyster Cult","day":"Mon May 25","time_et":"12:00 PM","fetchedAt":"2026-05-25T16:00:10.067Z","startTime":"2026-05-25T15:59:55.217Z","album":"Cult Classic","year":1994},{"official_position":54,"song":"Jungleland","artist":"Bruce Springsteen","day":"Mon May 25","time_et":"11:42 AM","fetchedAt":"2026-05-25T15:42:59.879Z","startTime":"2026-05-25T15:42:40.439Z","album":null,"year":null},{"official_position":55,"song":"THE LOW SPARK OF HIGH-HEELED BOYS","artist":"Traffic","day":"Mon May 25","time_et":"11:31 AM","fetchedAt":"2026-05-25T15:31:29.861Z","startTime":"2026-05-25T15:31:12.201Z","album":"The Low Spark of High Heeled Boys","year":1971},{"official_position":56,"song":"DON'T STOP ME NOW (Original Studio Version)","artist":"Queen","day":"Mon May 25","time_et":"11:27 AM","fetchedAt":"2026-05-25T15:27:49.782Z","startTime":"2026-05-25T15:27:37.532Z","album":null,"year":null},{"official_position":57,"song":"Don't Stop Believing","artist":"Journey","day":"Mon May 25","time_et":"11:15 AM","fetchedAt":"2026-05-25T15:15:09.639Z","startTime":"2026-05-25T15:14:54.916Z","album":null,"year":null},{"official_position":58,"song":"SCENES FROM AN ITALIAN RESTURANT","artist":"Billy Joel","day":"Mon May 25","time_et":"11:07 AM","fetchedAt":"2026-05-25T15:07:39.538Z","startTime":"2026-05-25T15:07:27.867Z","album":"An Innocent Man","year":1983},{"official_position":59,"song":"HELLS BELLS","artist":"AC/DC","day":"Mon May 25","time_et":"11:02 AM","fetchedAt":"2026-05-25T15:02:39.500Z","startTime":"2026-05-25T15:02:17.626Z","album":null,"year":1980},{"official_position":60,"song":"Highway To Hell","artist":"AC/DC","day":"Mon May 25","time_et":"10:59 AM","fetchedAt":"2026-05-25T14:59:09.472Z","startTime":"2026-05-25T14:58:50.553Z","album":null,"year":1979},{"official_position":61,"song":"Here Comes The Sun","artist":"Beatles","day":"Mon May 25","time_et":"10:49 AM","fetchedAt":"2026-05-25T14:49:19.364Z","startTime":"2026-05-25T14:48:52.416Z","album":"The Beatles Tapes From The David Wigg Interviews","year":1990},{"official_position":62,"song":"MR. BLUE SKY","artist":"ELECTRIC LIGHT ORCHESTRA","day":"Mon May 25","time_et":"10:43 AM","fetchedAt":"2026-05-25T14:43:59.329Z","startTime":"2026-05-25T14:43:45.096Z","album":"Out of the Blue","year":1977},{"official_position":63,"song":"American Girl","artist":"Tom Petty & The Heartbreakers","day":"Mon May 25","time_et":"10:40 AM","fetchedAt":"2026-05-25T14:40:29.300Z","startTime":"2026-05-25T14:40:12.731Z","album":null,"year":1977},{"official_position":64,"song":"SILVER SPRINGS","artist":"FLEETWOOD MAC","day":"Mon May 25","time_et":"10:35 AM","fetchedAt":"2026-05-25T14:35:39.250Z","startTime":"2026-05-25T14:35:28.248Z","album":"Rumours","year":2004},{"official_position":65,"song":"Enter Sandman","artist":"METALLICA","day":"Mon May 25","time_et":"10:30 AM","fetchedAt":"2026-05-25T14:30:09.196Z","startTime":"2026-05-25T14:29:45.417Z","album":"TosoX Episode 3","year":2018},{"official_position":66,"song":"American Pie","artist":"Don McLean","day":"Mon May 25","time_et":"10:12 AM","fetchedAt":"2026-05-25T14:12:59.029Z","startTime":"2026-05-25T14:12:43.470Z","album":null,"year":1971},{"official_position":67,"song":"Jessica","artist":"Allman Brothers Band","day":"Mon May 25","time_et":"10:05 AM","fetchedAt":"2026-05-25T14:05:28.940Z","startTime":"2026-05-25T14:05:13.619Z","album":"Brothers and Sisters","year":1973},{"official_position":68,"song":"Caught Up In You","artist":".38 SPECIAL","day":"Mon May 25","time_et":"10:00 AM","fetchedAt":"2026-05-25T14:00:58.866Z","startTime":"2026-05-25T14:00:46.154Z","album":null,"year":null},{"official_position":69,"song":"Summer Of '69","artist":"BRYAN ADAMS","day":"Mon May 25","time_et":"9:57 AM","fetchedAt":"2026-05-25T13:57:08.818Z","startTime":"2026-05-25T13:56:58.541Z","album":null,"year":1985},{"official_position":70,"song":"Roundabout","artist":"YES","day":"Mon May 25","time_et":"9:41 AM","fetchedAt":"2026-05-25T13:41:28.701Z","startTime":"2026-05-25T13:40:57.306Z","album":null,"year":1971},{"official_position":71,"song":"Eminence Front","artist":"Who","day":"Mon May 25","time_et":"9:35 AM","fetchedAt":"2026-05-25T13:35:38.638Z","startTime":"2026-05-25T13:35:18.976Z","album":"It\u2019s Hard","year":1997},{"official_position":72,"song":"Tom Sawyer","artist":"Rush","day":"Mon May 25","time_et":"9:30 AM","fetchedAt":"2026-05-25T13:30:58.606Z","startTime":"2026-05-25T13:30:36.788Z","album":null,"year":1981},{"official_position":73,"song":"WHITE WEDDING PT. 1","artist":"Billy Idol","day":"Mon May 25","time_et":"9:17 AM","fetchedAt":"2026-05-25T13:17:18.429Z","startTime":"2026-05-25T13:16:50.825Z","album":"Cyberpunk","year":1993},{"official_position":74,"song":"For Those About To Rock (We Salute You)","artist":"AC/DC","day":"Mon May 25","time_et":"9:11 AM","fetchedAt":"2026-05-25T13:11:18.386Z","startTime":"2026-05-25T13:11:01.937Z","album":null,"year":null},{"official_position":75,"song":"LYIN' EYES","artist":"EAGLES","day":"Mon May 25","time_et":"9:04 AM","fetchedAt":"2026-05-25T13:04:58.314Z","startTime":"2026-05-25T13:04:45.590Z","album":null,"year":1975},{"official_position":76,"song":"Back In The Saddle","artist":"Aerosmith","day":"Mon May 25","time_et":"8:59 AM","fetchedAt":"2026-05-25T12:59:58.238Z","startTime":"2026-05-25T12:59:40.212Z","album":"Rocks Session","year":2014},{"official_position":77,"song":"Carry On Wayward Son","artist":"Kansas","day":"Mon May 25","time_et":"8:46 AM","fetchedAt":"2026-05-25T12:46:58.126Z","startTime":"2026-05-25T12:46:38.787Z","album":null,"year":1976},{"official_position":78,"song":"LOCOMOTIVE BREATH","artist":"Jethro Tull","day":"Mon May 25","time_et":"8:43 AM","fetchedAt":"2026-05-25T12:43:08.109Z","startTime":"2026-05-25T12:42:54.623Z","album":null,"year":null},{"official_position":79,"song":"TINY DANCER","artist":"ELTON JOHN","day":"Mon May 25","time_et":"8:36 AM","fetchedAt":"2026-05-25T12:36:58.028Z","startTime":"2026-05-25T12:36:38.109Z","album":"Madman Across the Water","year":1971},{"official_position":80,"song":"Whole Lotta Love","artist":"Led Zeppelin","day":"Mon May 25","time_et":"8:23 AM","fetchedAt":"2026-05-25T12:23:07.910Z","startTime":"2026-05-25T12:22:46.156Z","album":null,"year":1969},{"official_position":81,"song":"FOREPLAY / LONG TIME","artist":"Boston","day":"Mon May 25","time_et":"8:15 AM","fetchedAt":"2026-05-25T12:15:17.813Z","startTime":"2026-05-25T12:15:01.108Z","album":"Boston","year":1976},{"official_position":82,"song":"DESPERADO","artist":"EAGLES","day":"Mon May 25","time_et":"8:10 AM","fetchedAt":"2026-05-25T12:10:57.844Z","startTime":"2026-05-25T12:10:48.633Z","album":null,"year":1973},{"official_position":83,"song":"WONDERFUL TONIGHT","artist":"Eric Clapton","day":"Mon May 25","time_et":"8:07 AM","fetchedAt":"2026-05-25T12:07:17.751Z","startTime":"2026-05-25T12:07:07.987Z","album":null,"year":1977},{"official_position":84,"song":"Space Oddity","artist":"DAVID BOWIE","day":"Mon May 25","time_et":"8:02 AM","fetchedAt":"2026-05-25T12:02:17.680Z","startTime":"2026-05-25T12:01:56.916Z","album":"David Bowie","year":1969},{"official_position":85,"song":"Sweet Emotion","artist":"Aerosmith","day":"Mon May 25","time_et":"7:50 AM","fetchedAt":"2026-05-25T11:50:37.554Z","startTime":"2026-05-25T11:50:19.073Z","album":null,"year":1975},{"official_position":86,"song":"The House Of The Rising Sun","artist":"The Animals","day":"Mon May 25","time_et":"7:46 AM","fetchedAt":"2026-05-25T11:46:07.516Z","startTime":"2026-05-25T11:45:46.570Z","album":"The Animals","year":2002},{"official_position":87,"song":"Rock And Roll Band","artist":"Boston","day":"Mon May 25","time_et":"7:42 AM","fetchedAt":"2026-05-25T11:42:57.500Z","startTime":"2026-05-25T11:42:32.638Z","album":null,"year":null},{"official_position":88,"song":"Shooting Star","artist":"Bad Company","day":"Mon May 25","time_et":"7:36 AM","fetchedAt":"2026-05-25T11:36:37.438Z","startTime":"2026-05-25T11:36:17.741Z","album":"Can't Get Enough Of These Guys","year":1993},{"official_position":89,"song":"THE WEIGHT","artist":"THE BAND","day":"Mon May 25","time_et":"7:31 AM","fetchedAt":"2026-05-25T11:31:37.363Z","startTime":"2026-05-25T11:31:24.965Z","album":null,"year":null},{"official_position":90,"song":"Heroes","artist":"DAVID BOWIE","day":"Mon May 25","time_et":"7:16 AM","fetchedAt":"2026-05-25T11:16:47.261Z","startTime":"2026-05-25T11:16:24.860Z","album":null,"year":null},{"official_position":91,"song":"Paint It Black","artist":"ROLLING STONES","day":"Mon May 25","time_et":"7:13 AM","fetchedAt":"2026-05-25T11:13:17.182Z","startTime":"2026-05-25T11:12:59.525Z","album":"Dartford Renegades","year":1990},{"official_position":92,"song":"Sugar Magnolia","artist":"Grateful Dead","day":"Mon May 25","time_et":"7:09 AM","fetchedAt":"2026-05-25T11:09:47.152Z","startTime":"2026-05-25T11:09:26.798Z","album":null,"year":null},{"official_position":93,"song":"Goodbye Yellow Brick Road","artist":"ELTON JOHN","day":"Mon May 25","time_et":"7:06 AM","fetchedAt":"2026-05-25T11:06:27.096Z","startTime":"2026-05-25T11:06:06.770Z","album":null,"year":1973},{"official_position":94,"song":"CAPTAIN JACK","artist":"Billy Joel","day":"Mon May 25","time_et":"6:59 AM","fetchedAt":"2026-05-25T10:59:07.024Z","startTime":"2026-05-25T10:58:55.597Z","album":"Piano Man","year":1975},{"official_position":95,"song":"Melissa","artist":"Allman Brothers Band","day":"Mon May 25","time_et":"6:48 AM","fetchedAt":"2026-05-25T10:48:46.907Z","startTime":"2026-05-25T10:48:35.207Z","album":"Eat a Peach","year":1972},{"official_position":96,"song":"Walk This Way","artist":"Aerosmith","day":"Mon May 25","time_et":"6:45 AM","fetchedAt":"2026-05-25T10:45:06.899Z","startTime":"2026-05-25T10:44:54.554Z","album":null,"year":1975},{"official_position":97,"song":"Suite: Judy Blue Eyes","artist":"Crosby Stills & Nash","day":"Mon May 25","time_et":"6:37 AM","fetchedAt":"2026-05-25T10:37:36.800Z","startTime":"2026-05-25T10:37:18.987Z","album":null,"year":null},{"official_position":98,"song":"VENTURA HIGHWAY","artist":"AMERICA","day":"Mon May 25","time_et":"6:33 AM","fetchedAt":"2026-05-25T10:33:56.834Z","startTime":"2026-05-25T10:33:47.710Z","album":null,"year":1972},{"official_position":99,"song":"Fortunate Son","artist":"Creedence Clearwater Revival","day":"Mon May 25","time_et":"6:31 AM","fetchedAt":"2026-05-25T10:31:36.749Z","startTime":"2026-05-25T10:31:23.546Z","album":null,"year":null},{"official_position":100,"song":"Bad Company","artist":"Bad Company","day":"Mon May 25","time_et":"6:18 AM","fetchedAt":"2026-05-25T10:18:46.624Z","startTime":"2026-05-25T10:18:25.104Z","album":"Bad Company","year":1974},{"official_position":101,"song":"Layla","artist":"Derek and The Dominos","day":"Mon May 25","time_et":"6:11 AM","fetchedAt":"2026-05-25T10:11:36.579Z","startTime":"2026-05-25T10:11:16.077Z","album":null,"year":1970},{"official_position":102,"song":"Hollywood Nights","artist":"Bob Seger","day":"Mon May 25","time_et":"6:06 AM","fetchedAt":"2026-05-25T10:06:26.541Z","startTime":"2026-05-25T10:06:06.058Z","album":"Stranger in Town","year":1978},{"official_position":103,"song":"You Can't Always Get What You Want","artist":"Rolling Stones","day":"Sun May 24","time_et":"Not captured","fetchedAt":"","startTime":"","album":null,"year":1969},{"official_position":104,"song":"Can't You Hear Me Knocking","artist":"ROLLING STONES","day":"Sun May 24","time_et":"9:56 PM","fetchedAt":"2026-05-25T01:56:21.675Z","startTime":"2026-05-25T01:56:06.619Z","album":null,"year":null},{"official_position":105,"song":"BRAIN DAMAGE/ ECLIPSE","artist":"Pink Floyd","day":"Sun May 24","time_et":"9:43 PM","fetchedAt":"2026-05-25T01:43:21.657Z","startTime":"2026-05-25T01:42:59.665Z","album":"URIE NATION","year":2015},{"official_position":106,"song":"Urgent","artist":"Foreigner","day":"Sun May 24","time_et":"9:38 PM","fetchedAt":"2026-05-25T01:38:41.681Z","startTime":"2026-05-25T01:38:21.937Z","album":"DER LETZTE BULLE - MICKs MIX TAPE","year":2019},{"official_position":107,"song":"CASEY JONES","artist":"Grateful Dead","day":"Sun May 24","time_et":"9:34 PM","fetchedAt":"2026-05-25T01:34:11.645Z","startTime":"2026-05-25T01:33:52.261Z","album":"Workingman's Dead","year":2001},{"official_position":108,"song":"Band On The Run","artist":"PAUL MCCARTNEY [+] WINGS","day":"Sun May 24","time_et":"9:28 PM","fetchedAt":"2026-05-25T01:28:41.642Z","startTime":"2026-05-25T01:28:25.528Z","album":"Band on the Run","year":1974},{"official_position":109,"song":"Your Wildest Dreams","artist":"Moody Blues","day":"Sun May 24","time_et":"9:16 PM","fetchedAt":"2026-05-25T01:16:11.631Z","startTime":"2026-05-25T01:15:53.610Z","album":"The Other Side of Life","year":1986},{"official_position":110,"song":"INTO THE MYSTIC","artist":"Van Morrison","day":"Sun May 24","time_et":"9:12 PM","fetchedAt":"2026-05-25T01:12:41.644Z","startTime":"2026-05-25T01:12:24.346Z","album":"Moondance","year":1979},{"official_position":111,"song":"JUKE BOX HERO","artist":"Foreigner","day":"Sun May 24","time_et":"9:08 PM","fetchedAt":"2026-05-25T01:08:21.645Z","startTime":"2026-05-25T01:07:55.726Z","album":"Can\u2019t Slow Down","year":2010},{"official_position":112,"song":"COME MONDAY","artist":"JIMMY BUFFETT","day":"Sun May 24","time_et":"9:05 PM","fetchedAt":"2026-05-25T01:05:11.634Z","startTime":"2026-05-25T01:04:51.008Z","album":null,"year":null},{"official_position":113,"song":"You Shook Me All Night Long","artist":"AC/DC","day":"Sun May 24","time_et":"9:01 PM","fetchedAt":"2026-05-25T01:01:31.612Z","startTime":"2026-05-25T01:01:15.391Z","album":null,"year":1980},{"official_position":114,"song":"Up On Cripple Creek","artist":"THE BAND","day":"Sun May 24","time_et":"8:56 PM","fetchedAt":"2026-05-25T00:56:51.613Z","startTime":"2026-05-25T00:56:41.520Z","album":null,"year":null},{"official_position":115,"song":"THE LOAD OUT /  STAY","artist":"JACKSON BROWNE","day":"Sun May 24","time_et":"8:40 PM","fetchedAt":"2026-05-25T00:40:31.513Z","startTime":"2026-05-25T00:40:15.958Z","album":"Lives in the Balance","year":1986},{"official_position":116,"song":"Margaritaville","artist":"JIMMY BUFFETT","day":"Sun May 24","time_et":"8:36 PM","fetchedAt":"2026-05-25T00:36:21.517Z","startTime":"2026-05-25T00:36:09.410Z","album":null,"year":null},{"official_position":117,"song":"Hot For Teacher","artist":"Van Halen","day":"Sun May 24","time_et":"8:23 PM","fetchedAt":"2026-05-25T00:23:41.288Z","startTime":"2026-05-25T00:23:20.449Z","album":"1984","year":2008},{"official_position":118,"song":"Unchained","artist":"Van Halen","day":"Sun May 24","time_et":"8:20 PM","fetchedAt":"2026-05-25T00:20:01.274Z","startTime":"2026-05-25T00:19:45.336Z","album":"Fair Warning","year":2001},{"official_position":119,"song":"Come Sail Away","artist":"Styx","day":"Sun May 24","time_et":"8:14 PM","fetchedAt":"2026-05-25T00:14:11.224Z","startTime":"2026-05-25T00:13:45.910Z","album":null,"year":null},{"official_position":120,"song":"I'VE SEEN ALL GOOD PEOPLE (YOUR MOVE)","artist":"YES","day":"Sun May 24","time_et":"8:07 PM","fetchedAt":"2026-05-25T00:07:11.230Z","startTime":"2026-05-25T00:06:55.651Z","album":"The Yes Album","year":1971},{"official_position":121,"song":"Touch Of Grey","artist":"Grateful Dead","day":"Sun May 24","time_et":"8:01 PM","fetchedAt":"2026-05-25T00:01:21.168Z","startTime":"2026-05-25T00:01:03.633Z","album":null,"year":null},{"official_position":122,"song":"T.N.T.","artist":"AC/DC","day":"Sun May 24","time_et":"7:50 PM","fetchedAt":"2026-05-24T23:50:50.977Z","startTime":"2026-05-24T23:50:33.930Z","album":null,"year":1975},{"official_position":123,"song":"SQUONK","artist":"GENESIS","day":"Sun May 24","time_et":"7:44 PM","fetchedAt":"2026-05-24T23:44:30.913Z","startTime":"2026-05-24T23:44:05.691Z","album":null,"year":null},{"official_position":124,"song":"SWEET CHILD O'MINE","artist":"Guns n' Roses","day":"Sun May 24","time_et":"7:38 PM","fetchedAt":"2026-05-24T23:38:30.882Z","startTime":"2026-05-24T23:38:16.034Z","album":null,"year":null},{"official_position":125,"song":"Imagine","artist":"JOHN LENNON","day":"Fri May 22","time_et":"4:47 PM","fetchedAt":"2026-05-22T20:47:38.078Z","startTime":"2026-05-22T20:47:20.079Z","album":"The Lost Lennon Tapes, Volume 4","year":1988},{"official_position":126,"song":"FUNERAL FOR A FRIEND/LOVE LIES BLEEDING","artist":"Elton John","day":"Sun May 24","time_et":"7:16 PM","fetchedAt":"2026-05-24T23:16:40.657Z","startTime":"2026-05-24T23:16:27.286Z","album":"Rock is Dead","year":2015},{"official_position":127,"song":"Everlong","artist":"Foo Fighters","day":"Sun May 24","time_et":"7:12 PM","fetchedAt":"2026-05-24T23:12:40.610Z","startTime":"2026-05-24T23:12:14.075Z","album":null,"year":null},{"official_position":128,"song":"DON'T LET THE SUN GO DOWN ON ME","artist":"ELTON JOHN","day":"Sun May 24","time_et":"7:06 PM","fetchedAt":"2026-05-24T23:06:50.596Z","startTime":"2026-05-24T23:06:38.127Z","album":null,"year":null},{"official_position":129,"song":"RIPPLE","artist":"Grateful Dead","day":"Sun May 24","time_et":"7:02 PM","fetchedAt":"2026-05-24T23:02:50.533Z","startTime":"2026-05-24T23:02:26.393Z","album":null,"year":null},{"official_position":130,"song":"DOWN ON THE CORNER","artist":"Creedence Clearwater Revival","day":"Sun May 24","time_et":"7:00 PM","fetchedAt":"2026-05-24T23:00:00.504Z","startTime":"2026-05-24T22:59:45.818Z","album":null,"year":null},{"official_position":131,"song":"WOULD?","artist":"ALICE IN CHAINS","day":"Sun May 24","time_et":"6:56 PM","fetchedAt":"2026-05-24T22:56:30.472Z","startTime":"2026-05-24T22:56:11.953Z","album":null,"year":null},{"official_position":132,"song":"Iron Man","artist":"Black Sabbath","day":"Sun May 24","time_et":"6:43 PM","fetchedAt":"2026-05-24T22:43:30.379Z","startTime":"2026-05-24T22:43:03.061Z","album":null,"year":null},{"official_position":133,"song":"SILVER, BLUE & GOLD","artist":"Bad Company","day":"Sun May 24","time_et":"6:38 PM","fetchedAt":"2026-05-24T22:38:20.302Z","startTime":"2026-05-24T22:37:58.153Z","album":"Run With the Pack","year":1976},{"official_position":134,"song":"Ziggy Stardust","artist":"DAVID BOWIE","day":"Sun May 24","time_et":"6:35 PM","fetchedAt":"2026-05-24T22:35:00.273Z","startTime":"2026-05-24T22:34:42.690Z","album":"The Rise and Fall of Ziggy Stardust and the Spiders From Mars","year":1972},{"official_position":135,"song":"PROMISES IN THE DARK","artist":"PAT BENATAR","day":"Sun May 24","time_et":"6:30 PM","fetchedAt":"2026-05-24T22:30:10.265Z","startTime":"2026-05-24T22:29:47.982Z","album":"Precious Time","year":1981},{"official_position":136,"song":"RAMBLIN'  MAN","artist":"Allman Brothers Band","day":"Sun May 24","time_et":"6:17 PM","fetchedAt":"2026-05-24T22:17:40.138Z","startTime":"2026-05-24T22:17:23.269Z","album":null,"year":null},{"official_position":137,"song":"FEELIN' STRONGER EVERY DAY","artist":"CHICAGO","day":"Sun May 24","time_et":"6:13 PM","fetchedAt":"2026-05-24T22:13:20.099Z","startTime":"2026-05-24T22:13:01.023Z","album":"Chicago VI","year":1973},{"official_position":138,"song":"Out In The Street","artist":"Bruce Springsteen","day":"Sun May 24","time_et":"6:08 PM","fetchedAt":"2026-05-24T22:08:50.029Z","startTime":"2026-05-24T22:08:40.323Z","album":null,"year":null},{"official_position":139,"song":"LAWYERS, GUNS AND MONEY","artist":"Warren Zevon","day":"Sun May 24","time_et":"6:05 PM","fetchedAt":"2026-05-24T22:05:30.107Z","startTime":"2026-05-24T22:05:16.497Z","album":"Excitable Boy","year":1978},{"official_position":140,"song":"Limelight","artist":"Rush","day":"Sun May 24","time_et":"6:01 PM","fetchedAt":"2026-05-24T22:01:10.033Z","startTime":"2026-05-24T22:00:54.780Z","album":null,"year":1981},{"official_position":141,"song":"Runnin' Down A Dream","artist":"Tom Petty","day":"Sun May 24","time_et":"5:49 PM","fetchedAt":"2026-05-24T21:49:39.947Z","startTime":"2026-05-24T21:49:21.712Z","album":"Full Moon Fever","year":1989},{"official_position":142,"song":"(I Can't Get No) Satisfaction","artist":"ROLLING STONES","day":"Sun May 24","time_et":"5:45 PM","fetchedAt":"2026-05-24T21:45:49.840Z","startTime":"2026-05-24T21:45:36.430Z","album":"Better Than the Real Rebirth","year":2000},{"official_position":143,"song":"Learning To Fly","artist":"Pink Floyd","day":"Sun May 24","time_et":"5:41 PM","fetchedAt":"2026-05-24T21:41:19.859Z","startTime":"2026-05-24T21:40:58.000Z","album":null,"year":1991},{"official_position":144,"song":"Where the Streets Have No Name","artist":"U2","day":"Sun May 24","time_et":"5:35 PM","fetchedAt":"2026-05-24T21:35:49.711Z","startTime":"2026-05-24T21:35:22.072Z","album":null,"year":1987},{"official_position":145,"song":"She's A Rainbow","artist":"ROLLING STONES","day":"Sun May 24","time_et":"5:31 PM","fetchedAt":"2026-05-24T21:31:19.687Z","startTime":"2026-05-24T21:31:02.581Z","album":"Their Satanic Majesties Request","year":1967},{"official_position":146,"song":"Badlands","artist":"Bruce Springsteen","day":"Sun May 24","time_et":"5:19 PM","fetchedAt":"2026-05-24T21:19:39.619Z","startTime":"2026-05-24T21:19:21.967Z","album":null,"year":1978},{"official_position":147,"song":"MY SWEET LORD","artist":"GEORGE HARRISON","day":"Sun May 24","time_et":"5:14 PM","fetchedAt":"2026-05-24T21:14:59.535Z","startTime":"2026-05-24T21:14:42.692Z","album":null,"year":null},{"official_position":148,"song":"HOME BY THE SEA","artist":"GENESIS","day":"Sun May 24","time_et":"5:09 PM","fetchedAt":"2026-05-24T21:09:59.489Z","startTime":"2026-05-24T21:09:38.444Z","album":null,"year":null},{"official_position":149,"song":"Brandy","artist":"Looking Glass","day":"Sun May 24","time_et":"5:06 PM","fetchedAt":"2026-05-24T21:06:49.435Z","startTime":"2026-05-24T21:06:33.681Z","album":null,"year":null},{"official_position":150,"song":"Sweet Home Alabama","artist":"LYNYRD SKYNYRD","day":"Sun May 24","time_et":"5:01 PM","fetchedAt":"2026-05-24T21:01:49.393Z","startTime":"2026-05-24T21:01:40.606Z","album":null,"year":1974},{"official_position":151,"song":"SEPARATE WAYS (WORLD'S APART)","artist":"Journey","day":"Sun May 24","time_et":"4:56 PM","fetchedAt":"2026-05-24T20:56:29.371Z","startTime":"2026-05-24T20:56:19.366Z","album":"Revelation","year":2008},{"official_position":152,"song":"UNCLE JOHN'S BAND","artist":"Grateful Dead","day":"Sun May 24","time_et":"4:44 PM","fetchedAt":"2026-05-24T20:44:59.239Z","startTime":"2026-05-24T20:44:37.703Z","album":null,"year":null},{"official_position":153,"song":"Slow Ride","artist":"Foghat","day":"Sun May 24","time_et":"4:36 PM","fetchedAt":"2026-05-24T20:36:49.168Z","startTime":"2026-05-24T20:36:19.926Z","album":"Under the Influence","year":2016},{"official_position":154,"song":"The Chain","artist":"FLEETWOOD MAC","day":"Sun May 24","time_et":"4:32 PM","fetchedAt":"2026-05-24T20:32:09.222Z","startTime":"2026-05-24T20:31:56.066Z","album":"Forgotten Treasures Mix #01","year":2012},{"official_position":155,"song":"Call Me The Breeze","artist":"LYNYRD SKYNYRD","day":"Sun May 24","time_et":"4:27 PM","fetchedAt":"2026-05-24T20:27:09.182Z","startTime":"2026-05-24T20:26:47.297Z","album":null,"year":null},{"official_position":156,"song":"Over The Hills And Far Away","artist":"Led Zeppelin","day":"Sun May 24","time_et":"4:14 PM","fetchedAt":"2026-05-24T20:14:39.040Z","startTime":"2026-05-24T20:14:14.611Z","album":null,"year":null},{"official_position":157,"song":"GIRLS, GIRLS, GIRLS","artist":"Motley Crue","day":"Sun May 24","time_et":"4:10 PM","fetchedAt":"2026-05-24T20:10:08.972Z","startTime":"2026-05-24T20:09:49.830Z","album":"Girls, Girls, Girls","year":1987},{"official_position":158,"song":"Ramble On","artist":"Led Zeppelin","day":"Sun May 24","time_et":"4:05 PM","fetchedAt":"2026-05-24T20:05:48.923Z","startTime":"2026-05-24T20:05:30.266Z","album":"Led Zeppelin II Multi Track Mixdowns","year":2012},{"official_position":159,"song":"White Rabbit","artist":"Jefferson Airplane","day":"Sun May 24","time_et":"4:03 PM","fetchedAt":"2026-05-24T20:03:18.899Z","startTime":"2026-05-24T20:02:56.395Z","album":null,"year":null},{"official_position":160,"song":"Philadelphia Freedom","artist":"ELTON JOHN","day":"Sun May 24","time_et":"3:57 PM","fetchedAt":"2026-05-24T19:57:58.919Z","startTime":"2026-05-24T19:57:43.584Z","album":null,"year":null},{"official_position":161,"song":"Peaceful Easy Feeling","artist":"EAGLES","day":"Sun May 24","time_et":"3:46 PM","fetchedAt":"2026-05-24T19:46:58.728Z","startTime":"2026-05-24T19:46:42.874Z","album":null,"year":null},{"official_position":162,"song":"L. A. WOMAN","artist":"Doors","day":"Sun May 24","time_et":"3:39 PM","fetchedAt":"2026-05-24T19:39:08.685Z","startTime":"2026-05-24T19:38:56.386Z","album":"L.A. Woman","year":2021},{"official_position":163,"song":"Livin' On The Edge","artist":"Aerosmith","day":"Sun May 24","time_et":"3:32 PM","fetchedAt":"2026-05-24T19:32:58.628Z","startTime":"2026-05-24T19:32:40.708Z","album":null,"year":null},{"official_position":164,"song":"GO YOUR OWN WAY","artist":"FLEETWOOD MAC","day":"Sun May 24","time_et":"3:29 PM","fetchedAt":"2026-05-24T19:29:28.559Z","startTime":"2026-05-24T19:29:00.434Z","album":"Mirage (deluxe)","year":2016},{"official_position":165,"song":"HAVE A DRINK ON ME","artist":"AC/DC","day":"Sun May 24","time_et":"3:17 PM","fetchedAt":"2026-05-24T19:17:48.469Z","startTime":"2026-05-24T19:17:24.206Z","album":"Back in Black","year":1980},{"official_position":166,"song":"BEGINNINGS","artist":"CHICAGO","day":"Sun May 24","time_et":"3:10 PM","fetchedAt":"2026-05-24T19:10:08.384Z","startTime":"2026-05-24T19:09:42.065Z","album":null,"year":null},{"official_position":167,"song":"Paranoid","artist":"Black Sabbath","day":"Sun May 24","time_et":"3:07 PM","fetchedAt":"2026-05-24T19:07:08.462Z","startTime":"2026-05-24T19:06:52.212Z","album":null,"year":null},{"official_position":168,"song":"ONE WAY OR ANOTHER","artist":"BLONDIE","day":"Sun May 24","time_et":"3:03 PM","fetchedAt":"2026-05-24T19:03:28.329Z","startTime":"2026-05-24T19:03:13.245Z","album":null,"year":null},{"official_position":169,"song":"Break On Through","artist":"Doors","day":"Sun May 24","time_et":"3:00 PM","fetchedAt":"2026-05-24T19:00:58.329Z","startTime":"2026-05-24T19:00:42.067Z","album":null,"year":1967},{"official_position":170,"song":"Moving In Stereo","artist":"CARS","day":"Sun May 24","time_et":"2:56 PM","fetchedAt":"2026-05-24T18:56:18.294Z","startTime":"2026-05-24T18:56:03.037Z","album":"The Cars","year":1978},{"official_position":171,"song":"Light My Fire","artist":"Doors","day":"Sun May 24","time_et":"2:41 PM","fetchedAt":"2026-05-24T18:41:58.127Z","startTime":"2026-05-24T18:41:37.226Z","album":"The Doors","year":1967},{"official_position":172,"song":"White Room","artist":"Cream","day":"Sun May 24","time_et":"2:36 PM","fetchedAt":"2026-05-24T18:36:58.081Z","startTime":"2026-05-24T18:36:41.741Z","album":null,"year":1968},{"official_position":173,"song":"YOU GIVE LOVE A BAD NAME","artist":"BON JOVI","day":"Sun May 24","time_et":"2:33 PM","fetchedAt":"2026-05-24T18:33:18.048Z","startTime":"2026-05-24T18:32:57.590Z","album":null,"year":1986},{"official_position":174,"song":"Southern Cross","artist":"Crosby Stills & Nash","day":"Sun May 24","time_et":"2:28 PM","fetchedAt":"2026-05-24T18:28:38.003Z","startTime":"2026-05-24T18:28:15.592Z","album":"Daylight Again","year":1982},{"official_position":175,"song":"Run To You","artist":"BRYAN ADAMS","day":"Sun May 24","time_et":"2:17 PM","fetchedAt":"2026-05-24T18:17:27.925Z","startTime":"2026-05-24T18:17:12.018Z","album":"On Stage","year":1991},{"official_position":176,"song":"Heartbreaker","artist":"PAT BENATAR","day":"Sun May 24","time_et":"2:13 PM","fetchedAt":"2026-05-24T18:13:57.898Z","startTime":"2026-05-24T18:13:43.935Z","album":null,"year":1979},{"official_position":177,"song":"Heat Of The Moment","artist":"ASIA","day":"Sun May 24","time_et":"12:07 AM","fetchedAt":"2026-05-24T04:07:41.920Z","startTime":"2026-05-24T04:07:29.163Z","album":null,"year":1982},{"official_position":178,"song":"SGT.PEPPER/WITH A LITTLE HELP","artist":"Beatles","day":"Sun May 24","time_et":"2:05 PM","fetchedAt":"2026-05-24T18:05:37.854Z","startTime":"2026-05-24T18:05:19.394Z","album":"Reunions 74 & 92","year":1992},{"official_position":179,"song":"Fat Bottomed Girls","artist":"Queen","day":"Sun May 24","time_et":"2:01 PM","fetchedAt":"2026-05-24T18:01:27.831Z","startTime":"2026-05-24T18:01:05.363Z","album":null,"year":null},{"official_position":180,"song":"OLD TIME ROCK & ROLL","artist":"Bob Seger","day":"Fri May 22","time_et":"8:45 PM","fetchedAt":"2026-05-23T00:45:10.129Z","startTime":"2026-05-23T00:45:01.637Z","album":null,"year":null},{"official_position":181,"song":"Jump","artist":"Van Halen","day":"Sun May 24","time_et":"1:43 PM","fetchedAt":"2026-05-24T17:43:57.694Z","startTime":"2026-05-24T17:43:43.377Z","album":"New Atlantic","year":2017},{"official_position":182,"song":"A WHITER SHADE OF PALE","artist":"Procol Harum","day":"Sun May 24","time_et":"1:39 PM","fetchedAt":"2026-05-24T17:39:57.666Z","startTime":"2026-05-24T17:39:41.900Z","album":null,"year":1967},{"official_position":183,"song":"LOVE, REIGN O'ER ME","artist":"Who","day":"Sun May 24","time_et":"1:34 PM","fetchedAt":"2026-05-24T17:34:17.598Z","startTime":"2026-05-24T17:33:58.593Z","album":null,"year":null},{"official_position":184,"song":"ROSALITA (COME OUT TONIGHT)","artist":"Bruce Springsteen","day":"Sun May 24","time_et":"1:19 PM","fetchedAt":"2026-05-24T17:19:27.494Z","startTime":"2026-05-24T17:19:14.293Z","album":null,"year":null},{"official_position":185,"song":"The Spirit Of Radio","artist":"Rush","day":"Sun May 24","time_et":"1:14 PM","fetchedAt":"2026-05-24T17:14:07.475Z","startTime":"2026-05-24T17:13:55.069Z","album":null,"year":1980},{"official_position":186,"song":"DO IT AGAIN","artist":"Steely Dan","day":"Sun May 24","time_et":"1:08 PM","fetchedAt":"2026-05-24T17:08:17.437Z","startTime":"2026-05-24T17:07:57.725Z","album":"Can\u2019t Buy a Thrill","year":1972},{"official_position":187,"song":"Angie","artist":"ROLLING STONES","day":"Sun May 24","time_et":"1:03 PM","fetchedAt":"2026-05-24T17:03:47.450Z","startTime":"2026-05-24T17:03:26.024Z","album":"Voodoo Mood #3 \u2013 Brilliant Outtakes, Demos & Specials","year":2006},{"official_position":188,"song":"Maggie May","artist":"ROD STEWART","day":"Sun May 24","time_et":"12:58 PM","fetchedAt":"2026-05-24T16:58:37.377Z","startTime":"2026-05-24T16:58:17.857Z","album":"The Rare Groove Mix","year":1988},{"official_position":189,"song":"Night Moves","artist":"Bob Seger","day":"Sun May 24","time_et":"12:46 PM","fetchedAt":"2026-05-24T16:46:27.276Z","startTime":"2026-05-24T16:46:04.154Z","album":"Night Moves","year":1976},{"official_position":190,"song":"EVERYBODY WANTS TO RULE THE WORLD","artist":"TEARS FOR FEARS","day":"Sun May 24","time_et":"12:42 PM","fetchedAt":"2026-05-24T16:42:07.346Z","startTime":"2026-05-24T16:41:51.196Z","album":"Dos D\u00e9cadas Dance","year":2002},{"official_position":191,"song":"Legs","artist":"ZZ Top","day":"Sun May 24","time_et":"12:37 PM","fetchedAt":"2026-05-24T16:37:47.228Z","startTime":"2026-05-24T16:37:30.474Z","album":null,"year":1983},{"official_position":192,"song":"Waiting On A Friend","artist":"ROLLING STONES","day":"Sun May 24","time_et":"12:33 PM","fetchedAt":"2026-05-24T16:33:17.204Z","startTime":"2026-05-24T16:33:00.118Z","album":null,"year":null},{"official_position":193,"song":"And The Cradle Will Rock","artist":"Van Halen","day":"Sun May 24","time_et":"12:29 PM","fetchedAt":"2026-05-24T16:29:57.187Z","startTime":"2026-05-24T16:29:40.470Z","album":"Women And Children First","year":1980},{"official_position":194,"song":"Dazed And Confused","artist":"Led Zeppelin","day":"Sun May 24","time_et":"12:15 PM","fetchedAt":"2026-05-24T16:15:57.135Z","startTime":"2026-05-24T16:15:36.938Z","album":null,"year":null},{"official_position":195,"song":"I'm Just A Singer (In A Rock And Roll Band)","artist":"Moody Blues","day":"Sun May 24","time_et":"12:11 PM","fetchedAt":"2026-05-24T16:11:47.112Z","startTime":"2026-05-24T16:11:23.255Z","album":null,"year":null},{"official_position":196,"song":"Misunderstanding","artist":"GENESIS","day":"Sun May 24","time_et":"12:08 PM","fetchedAt":"2026-05-24T16:08:27.102Z","startTime":"2026-05-24T16:08:12.830Z","album":"Duke","year":2007},{"official_position":197,"song":"SOMEONE SAVED MY LIFE TONIGHT","artist":"ELTON JOHN","day":"Sun May 24","time_et":"12:01 PM","fetchedAt":"2026-05-24T16:01:37.064Z","startTime":"2026-05-24T16:01:27.057Z","album":"Captain Fantastic and the Brown Dirt Cowboy (50th Anniversary Edition)","year":1975},{"official_position":198,"song":"Dr. Feelgood","artist":"Motley Crue","day":"Sun May 24","time_et":"11:56 AM","fetchedAt":"2026-05-24T15:56:57.113Z","startTime":"2026-05-24T15:56:45.763Z","album":null,"year":null},{"official_position":199,"song":"SOLSBURY HILL","artist":"PETER GABRIEL","day":"Sun May 24","time_et":"11:45 AM","fetchedAt":"2026-05-24T15:45:57.007Z","startTime":"2026-05-24T15:45:39.361Z","album":"So","year":2012},{"official_position":200,"song":"How Many More Times","artist":"Led Zeppelin","day":"Sun May 24","time_et":"11:37 AM","fetchedAt":"2026-05-24T15:37:16.959Z","startTime":"2026-05-24T15:37:03.139Z","album":null,"year":null},{"official_position":201,"song":"Lights","artist":"Journey","day":"Sun May 24","time_et":"11:33 AM","fetchedAt":"2026-05-24T15:33:46.924Z","startTime":"2026-05-24T15:33:29.082Z","album":"Revelation","year":2008},{"official_position":202,"song":"I'M YOUR CAPTAIN / CLOSER","artist":"Grand Funk Railroad","day":"Sun May 24","time_et":"11:16 AM","fetchedAt":"2026-05-24T15:16:06.952Z","startTime":"2026-05-24T15:15:50.761Z","album":"Grand Funk","year":1969},{"official_position":203,"song":"Edge Of Seventeen","artist":"Stevie Nicks","day":"Sun May 24","time_et":"11:10 AM","fetchedAt":"2026-05-24T15:10:36.838Z","startTime":"2026-05-24T15:10:15.098Z","album":null,"year":null},{"official_position":204,"song":"QUESTION","artist":"Moody Blues","day":"Sun May 24","time_et":"11:04 AM","fetchedAt":"2026-05-24T15:04:56.823Z","startTime":"2026-05-24T15:04:35.679Z","album":null,"year":null},{"official_position":205,"song":"TRUCKIN'","artist":"Grateful Dead","day":"Sun May 24","time_et":"10:59 AM","fetchedAt":"2026-05-24T14:59:56.828Z","startTime":"2026-05-24T14:59:29.174Z","album":null,"year":null},{"official_position":206,"song":"All My Love","artist":"Led Zeppelin","day":"Sun May 24","time_et":"10:46 AM","fetchedAt":"2026-05-24T14:46:46.758Z","startTime":"2026-05-24T14:46:32.374Z","album":"In Through the Out Door","year":1979},{"official_position":207,"song":"LOVIN' TOUCHIN' SQUEEZIN'","artist":"Journey","day":"Sun May 24","time_et":"10:42 AM","fetchedAt":"2026-05-24T14:42:46.812Z","startTime":"2026-05-24T14:42:33.767Z","album":"Evolution","year":1979},{"official_position":208,"song":"Riders On The Storm","artist":"Doors","day":"Sun May 24","time_et":"10:35 AM","fetchedAt":"2026-05-24T14:35:56.725Z","startTime":"2026-05-24T14:35:37.713Z","album":"L.A. Woman","year":2007},{"official_position":209,"song":"Revolution","artist":"Beatles","day":"Sun May 24","time_et":"10:32 AM","fetchedAt":"2026-05-24T14:32:36.739Z","startTime":"2026-05-24T14:32:12.987Z","album":null,"year":null},{"official_position":210,"song":"QUESTIONS 67 AND 68","artist":"CHICAGO","day":"Sun May 24","time_et":"10:19 AM","fetchedAt":"2026-05-24T14:19:16.699Z","startTime":"2026-05-24T14:18:57.678Z","album":"Chicago Transit Authority","year":1986},{"official_position":211,"song":"Drive","artist":"CARS","day":"Sun May 24","time_et":"10:15 AM","fetchedAt":"2026-05-24T14:15:16.716Z","startTime":"2026-05-24T14:15:04.444Z","album":"Heartbeat City","year":1984},{"official_position":212,"song":"Feel Like Makin' Love","artist":"Bad Company","day":"Sun May 24","time_et":"10:10 AM","fetchedAt":"2026-05-24T14:10:06.609Z","startTime":"2026-05-24T14:09:47.127Z","album":"Can't Get Enough Of These Guys","year":1993},{"official_position":213,"song":"Just What I Needed","artist":"CARS","day":"Sun May 24","time_et":"10:06 AM","fetchedAt":"2026-05-24T14:06:16.615Z","startTime":"2026-05-24T14:06:00.385Z","album":"The Cars","year":1988},{"official_position":214,"song":"WHIPPING POST","artist":"Allman Brothers Band","day":"Sun May 24","time_et":"10:00 AM","fetchedAt":"2026-05-24T14:00:46.550Z","startTime":"2026-05-24T14:00:24.950Z","album":null,"year":1969},{"official_position":215,"song":"Highway Star","artist":"Deep Purple","day":"Sun May 24","time_et":"9:47 AM","fetchedAt":"2026-05-24T13:47:06.501Z","startTime":"2026-05-24T13:46:46.159Z","album":null,"year":null},{"official_position":216,"song":"Strawberry Fields Forever","artist":"Beatles","day":"Sun May 24","time_et":"9:42 AM","fetchedAt":"2026-05-24T13:42:56.454Z","startTime":"2026-05-24T13:42:42.110Z","album":null,"year":null},{"official_position":217,"song":"Smoke On The Water","artist":"Deep Purple","day":"Sun May 24","time_et":"9:37 AM","fetchedAt":"2026-05-24T13:37:26.453Z","startTime":"2026-05-24T13:37:13.617Z","album":"Machine Head","year":1997},{"official_position":218,"song":"DREAMS","artist":"FLEETWOOD MAC","day":"Sun May 24","time_et":"9:32 AM","fetchedAt":"2026-05-24T13:32:56.416Z","startTime":"2026-05-24T13:32:42.011Z","album":"Rumours","year":1977},{"official_position":219,"song":"HYSTERIA","artist":"DEF LEPPARD","day":"Sun May 24","time_et":"9:18 AM","fetchedAt":"2026-05-24T13:18:46.312Z","startTime":"2026-05-24T13:18:26.578Z","album":null,"year":null},{"official_position":220,"song":"Yellow Submarine","artist":"Beatles","day":"Sun May 24","time_et":"9:16 AM","fetchedAt":"2026-05-24T13:16:06.342Z","startTime":"2026-05-24T13:15:49.528Z","album":"In The Studio 1966 - Revolving Turntables","year":2017},{"official_position":221,"song":"Pour Some Sugar On Me","artist":"DEF LEPPARD","day":"Sun May 24","time_et":"9:11 AM","fetchedAt":"2026-05-24T13:11:16.270Z","startTime":"2026-05-24T13:10:58.353Z","album":"Slang","year":1996},{"official_position":222,"song":"LIKE A ROLLING STONE","artist":"Bob Dylan","day":"Sun May 24","time_et":"9:05 AM","fetchedAt":"2026-05-24T13:05:06.230Z","startTime":"2026-05-24T13:04:55.177Z","album":null,"year":1965},{"official_position":223,"song":"BLUE SKY","artist":"Allman Brothers Band","day":"Sun May 24","time_et":"8:59 AM","fetchedAt":"2026-05-24T12:59:46.173Z","startTime":"2026-05-24T12:59:29.129Z","album":null,"year":null},{"official_position":224,"song":"SHADOWS OF THE NIGHT","artist":"PAT BENATAR","day":"Sun May 24","time_et":"8:47 AM","fetchedAt":"2026-05-24T12:47:46.181Z","startTime":"2026-05-24T12:47:30.327Z","album":null,"year":null},{"official_position":225,"song":"Rock And Roll, Hoochie Koo","artist":"Rick Derringer","day":"Sun May 24","time_et":"8:43 AM","fetchedAt":"2026-05-24T12:43:56.066Z","startTime":"2026-05-24T12:43:43.148Z","album":null,"year":null},{"official_position":226,"song":"ONE OF THESE NIGHTS","artist":"EAGLES","day":"Sun May 24","time_et":"8:38 AM","fetchedAt":"2026-05-24T12:38:56.033Z","startTime":"2026-05-24T12:38:39.128Z","album":null,"year":1975},{"official_position":227,"song":"Tenth Avenue Freeze-Out","artist":"Bruce Springsteen","day":"Sun May 24","time_et":"8:35 AM","fetchedAt":"2026-05-24T12:35:46.013Z","startTime":"2026-05-24T12:35:31.611Z","album":null,"year":null},{"official_position":228,"song":"I Don't Care Anymore","artist":"PHIL COLLINS","day":"Sun May 24","time_et":"8:30 AM","fetchedAt":"2026-05-24T12:30:16.048Z","startTime":"2026-05-24T12:29:57.530Z","album":"Hello, I Must Be Going!","year":1982},{"official_position":229,"song":"Man In The Box","artist":"ALICE IN CHAINS","day":"Sun May 24","time_et":"8:16 AM","fetchedAt":"2026-05-24T12:16:35.932Z","startTime":"2026-05-24T12:16:11.950Z","album":null,"year":1990},{"official_position":230,"song":"Sunshine Of Your Love","artist":"Cream","day":"Sun May 24","time_et":"8:12 AM","fetchedAt":"2026-05-24T12:12:22.069Z","startTime":"2026-05-24T12:12:00.185Z","album":null,"year":1967},{"official_position":231,"song":"Black Water","artist":"DOOBIE BROTHERS","day":"Sun May 24","time_et":"8:07 AM","fetchedAt":"2026-05-24T12:07:45.980Z","startTime":"2026-05-24T12:07:31.342Z","album":"What Were Once Vices Are Now Habits","year":1974},{"official_position":232,"song":"Cryin'","artist":"Aerosmith","day":"Sun May 24","time_et":"8:02 AM","fetchedAt":"2026-05-24T12:02:45.906Z","startTime":"2026-05-24T12:02:24.165Z","album":null,"year":1993},{"official_position":233,"song":"Love Is A Battlefield","artist":"PAT BENATAR","day":"Sun May 24","time_et":"7:56 AM","fetchedAt":"2026-05-24T11:56:55.943Z","startTime":"2026-05-24T11:56:40.858Z","album":null,"year":null},{"official_position":234,"song":"Come Together","artist":"Beatles","day":"Sun May 24","time_et":"7:45 AM","fetchedAt":"2026-05-24T11:45:15.897Z","startTime":"2026-05-24T11:45:00.029Z","album":"Jazz Beatles","year":2000},{"official_position":235,"song":"Running on Empty","artist":"JACKSON BROWNE","day":"Sun May 24","time_et":"7:40 AM","fetchedAt":"2026-05-24T11:40:25.842Z","startTime":"2026-05-24T11:40:05.815Z","album":null,"year":1977},{"official_position":236,"song":"Gimme All Your Lovin'","artist":"ZZ Top","day":"Sun May 24","time_et":"7:36 AM","fetchedAt":"2026-05-24T11:36:25.807Z","startTime":"2026-05-24T11:36:04.550Z","album":"Eliminator","year":1983},{"official_position":237,"song":"Won't Get Fooled Again","artist":"Who","day":"Sun May 24","time_et":"7:27 AM","fetchedAt":"2026-05-24T11:27:35.785Z","startTime":"2026-05-24T11:27:15.382Z","album":null,"year":1971},{"official_position":238,"song":"The Promised Land","artist":"Bruce Springsteen","day":"Sun May 24","time_et":"7:14 AM","fetchedAt":"2026-05-24T11:14:25.851Z","startTime":"2026-05-24T11:14:09.274Z","album":null,"year":null},{"official_position":239,"song":"Somebody To Love","artist":"Queen","day":"Sun May 24","time_et":"7:09 AM","fetchedAt":"2026-05-24T11:09:15.754Z","startTime":"2026-05-24T11:09:03.273Z","album":null,"year":1976},{"official_position":240,"song":"Miss You","artist":"ROLLING STONES","day":"Sun May 24","time_et":"7:04 AM","fetchedAt":"2026-05-24T11:04:15.721Z","startTime":"2026-05-24T11:04:02.068Z","album":"Better Than the Real Rebirth","year":2000},{"official_position":241,"song":"Black","artist":"Pearl Jam","day":"Sat May 23","time_et":"Not captured","fetchedAt":"","startTime":"","album":null,"year":1991},{"official_position":242,"song":"BAD","artist":"U2","day":"Sat May 23","time_et":"11:55 PM","fetchedAt":"2026-05-24T03:55:21.702Z","startTime":"2026-05-24T03:55:08.105Z","album":null,"year":null},{"official_position":243,"song":"TONIGHT'S THE NIGHT (GONNA BE ALRIGHT)","artist":"ROD STEWART","day":"Sat May 23","time_et":"11:44 PM","fetchedAt":"2026-05-24T03:44:31.656Z","startTime":"2026-05-24T03:44:14.610Z","album":"A Night on the Town","year":1976},{"official_position":244,"song":"Who Are You","artist":"Who","day":"Sat May 23","time_et":"11:38 PM","fetchedAt":"2026-05-24T03:38:11.615Z","startTime":"2026-05-24T03:37:53.196Z","album":"Who Are You","year":2025},{"official_position":245,"song":"Breakdown","artist":"Tom Petty & The Heartbreakers","day":"Sat May 23","time_et":"11:35 PM","fetchedAt":"2026-05-24T03:35:31.575Z","startTime":"2026-05-24T03:35:13.487Z","album":null,"year":1976},{"official_position":246,"song":"Born In The U.S.A.","artist":"Bruce Springsteen","day":"Sat May 23","time_et":"11:22 PM","fetchedAt":"2026-05-24T03:22:41.486Z","startTime":"2026-05-24T03:22:27.089Z","album":null,"year":null},{"official_position":247,"song":"Hey You","artist":"Pink Floyd","day":"Sat May 23","time_et":"11:18 PM","fetchedAt":"2026-05-24T03:18:11.408Z","startTime":"2026-05-24T03:17:45.414Z","album":null,"year":1979},{"official_position":248,"song":"Dancing In The Dark","artist":"Bruce Springsteen","day":"Sat May 23","time_et":"11:14 PM","fetchedAt":"2026-05-24T03:14:11.373Z","startTime":"2026-05-24T03:13:44.917Z","album":null,"year":1984},{"official_position":249,"song":"Money For Nothing","artist":"Dire Straits","day":"Sat May 23","time_et":"11:05 PM","fetchedAt":"2026-05-24T03:05:51.367Z","startTime":"2026-05-24T03:05:29.239Z","album":null,"year":null},{"official_position":250,"song":"Tush","artist":"ZZ Top","day":"Sat May 23","time_et":"11:03 PM","fetchedAt":"2026-05-24T03:03:21.398Z","startTime":"2026-05-24T03:02:55.055Z","album":null,"year":1975},{"official_position":251,"song":"Free Fallin'","artist":"Tom Petty","day":"Sat May 23","time_et":"10:59 PM","fetchedAt":"2026-05-24T02:59:01.313Z","startTime":"2026-05-24T02:58:41.375Z","album":null,"year":1989},{"official_position":252,"song":"Hungry Heart","artist":"Bruce Springsteen","day":"Sat May 23","time_et":"10:48 PM","fetchedAt":"2026-05-24T02:48:11.278Z","startTime":"2026-05-24T02:47:51.481Z","album":null,"year":1980},{"official_position":253,"song":"Trampled Under Foot","artist":"Led Zeppelin","day":"Sat May 23","time_et":"10:42 PM","fetchedAt":"2026-05-24T02:42:11.297Z","startTime":"2026-05-24T02:41:55.307Z","album":null,"year":null},{"official_position":254,"song":"We're An American Band","artist":"Grand Funk Railroad","day":"Sat May 23","time_et":"10:38 PM","fetchedAt":"2026-05-24T02:38:41.303Z","startTime":"2026-05-24T02:38:24.131Z","album":"CAPITOL 50TH ANNIVERSARY THE COLLECTORS SERIES","year":1992},{"official_position":255,"song":"Gimme Three Steps","artist":"LYNYRD SKYNYRD","day":"Sat May 23","time_et":"10:34 PM","fetchedAt":"2026-05-24T02:34:11.301Z","startTime":"2026-05-24T02:33:54.586Z","album":null,"year":null},{"official_position":256,"song":"The Stranger","artist":"Billy Joel","day":"Sat May 23","time_et":"10:21 PM","fetchedAt":"2026-05-24T02:21:21.282Z","startTime":"2026-05-24T02:21:06.993Z","album":null,"year":null},{"official_position":257,"song":"THE VOICE","artist":"Moody Blues","day":"Sat May 23","time_et":"10:16 PM","fetchedAt":"2026-05-24T02:16:21.254Z","startTime":"2026-05-24T02:15:55.809Z","album":"Long Distance Voyager","year":1981},{"official_position":258,"song":"I'm Still Standing","artist":"ELTON JOHN","day":"Sat May 23","time_et":"10:13 PM","fetchedAt":"2026-05-24T02:13:21.246Z","startTime":"2026-05-24T02:12:58.563Z","album":null,"year":null},{"official_position":259,"song":"When The Levee Breaks","artist":"Led Zeppelin","day":"Sat May 23","time_et":"10:06 PM","fetchedAt":"2026-05-24T02:06:01.234Z","startTime":"2026-05-24T02:05:45.554Z","album":"[Led Zeppelin IV]","year":1971},{"official_position":260,"song":"Rocket Man","artist":"ELTON JOHN","day":"Sat May 23","time_et":"10:01 PM","fetchedAt":"2026-05-24T02:01:11.184Z","startTime":"2026-05-24T02:00:52.279Z","album":null,"year":1972},{"official_position":261,"song":"That Smell","artist":"LYNYRD SKYNYRD","day":"Sat May 23","time_et":"9:48 PM","fetchedAt":"2026-05-24T01:48:21.120Z","startTime":"2026-05-24T01:48:01.830Z","album":null,"year":null},{"official_position":262,"song":"Spirit In The Sky","artist":"Norman Greenbaum","day":"Sat May 23","time_et":"9:44 PM","fetchedAt":"2026-05-24T01:44:21.120Z","startTime":"2026-05-24T01:44:09.839Z","album":"Spirit In The Sky (Deluxe Edition)","year":1969},{"official_position":263,"song":"SARA","artist":"FLEETWOOD MAC","day":"Sat May 23","time_et":"9:38 PM","fetchedAt":"2026-05-24T01:38:01.086Z","startTime":"2026-05-24T01:37:51.833Z","album":"Tusk","year":2004},{"official_position":264,"song":"Paradise City","artist":"Guns n' Roses","day":"Sat May 23","time_et":"9:31 PM","fetchedAt":"2026-05-24T01:31:11.031Z","startTime":"2026-05-24T01:30:52.506Z","album":null,"year":null},{"official_position":265,"song":"SAY GOODBYE TO HOLLYWOOD","artist":"Billy Joel","day":"Sat May 23","time_et":"9:18 PM","fetchedAt":"2026-05-24T01:18:20.953Z","startTime":"2026-05-24T01:17:56.929Z","album":null,"year":null},{"official_position":266,"song":"Patience","artist":"Guns n' Roses","day":"Sat May 23","time_et":"9:12 PM","fetchedAt":"2026-05-24T01:12:11.020Z","startTime":"2026-05-24T01:11:51.827Z","album":null,"year":null},{"official_position":267,"song":"What Is And What Should Never Be","artist":"Led Zeppelin","day":"Sat May 23","time_et":"9:07 PM","fetchedAt":"2026-05-24T01:07:20.881Z","startTime":"2026-05-24T01:07:08.841Z","album":null,"year":null},{"official_position":268,"song":"I Want To Know What Love Is","artist":"Foreigner","day":"Sat May 23","time_et":"9:02 PM","fetchedAt":"2026-05-24T01:02:10.838Z","startTime":"2026-05-24T01:01:51.622Z","album":"Can\u2019t Slow Down","year":2009},{"official_position":269,"song":"Rebel Yell","artist":"Billy Idol","day":"Sat May 23","time_et":"8:57 PM","fetchedAt":"2026-05-24T00:57:10.776Z","startTime":"2026-05-24T00:56:59.021Z","album":null,"year":null},{"official_position":270,"song":"CELLULOID HEROES","artist":"KINKS","day":"Sat May 23","time_et":"8:51 PM","fetchedAt":"2026-05-24T00:51:00.727Z","startTime":"2026-05-24T00:50:44.375Z","album":null,"year":null},{"official_position":271,"song":"THE LAMB LIES DOWN ON BROADWAY","artist":"GENESIS","day":"Sat May 23","time_et":"8:46 PM","fetchedAt":"2026-05-24T00:46:10.708Z","startTime":"2026-05-24T00:45:53.045Z","album":null,"year":null},{"official_position":272,"song":"MAMA, I'M COMING HOME","artist":"Ozzy Osbourne","day":"Sat May 23","time_et":"8:42 PM","fetchedAt":"2026-05-24T00:42:00.650Z","startTime":"2026-05-24T00:41:40.831Z","album":"No More Tears Demo Sessions","year":1992},{"official_position":273,"song":"Get Back","artist":"Beatles","day":"Sat May 23","time_et":"8:38 PM","fetchedAt":"2026-05-24T00:38:40.624Z","startTime":"2026-05-24T00:38:28.799Z","album":null,"year":null},{"official_position":274,"song":"Welcome To The Jungle","artist":"Guns n' Roses","day":"Sat May 23","time_et":"8:34 PM","fetchedAt":"2026-05-24T00:34:10.655Z","startTime":"2026-05-24T00:33:54.352Z","album":null,"year":null},{"official_position":275,"song":"Bad Reputation","artist":"Joan Jett & The Blackhearts","day":"Sat May 23","time_et":"8:31 PM","fetchedAt":"2026-05-24T00:31:20.596Z","startTime":"2026-05-24T00:31:05.296Z","album":null,"year":1980},{"official_position":276,"song":"Beth","artist":"KISS","day":"Sat May 23","time_et":"8:28 PM","fetchedAt":"2026-05-24T00:28:40.535Z","startTime":"2026-05-24T00:28:14.373Z","album":null,"year":null},{"official_position":277,"song":"PRESSURE","artist":"Billy Joel","day":"Sat May 23","time_et":"8:21 PM","fetchedAt":"2026-05-24T00:21:40.578Z","startTime":"2026-05-24T00:21:19.403Z","album":null,"year":null},{"official_position":278,"song":"ESCALATOR OF LIFE","artist":"ROBERT HAZARD","day":"Sat May 23","time_et":"8:18 PM","fetchedAt":"2026-05-24T00:18:00.459Z","startTime":"2026-05-24T00:17:42.154Z","album":"Under Cover of Darkness","year":2019},{"official_position":279,"song":"TUESDAY AFTERNOON","artist":"Moody Blues","day":"Sat May 23","time_et":"8:12 PM","fetchedAt":"2026-05-24T00:12:50.419Z","startTime":"2026-05-24T00:12:31.762Z","album":null,"year":null},{"official_position":280,"song":"ALL ALONG THE WATCHTOWER","artist":"Jimi Hendrix","day":"Sat May 23","time_et":"8:08 PM","fetchedAt":"2026-05-24T00:08:50.369Z","startTime":"2026-05-24T00:08:31.309Z","album":null,"year":null},{"official_position":281,"song":"The Ballad Of Billy The Kid","artist":"Billy Joel","day":"Sat May 23","time_et":"8:03 PM","fetchedAt":"2026-05-24T00:03:00.327Z","startTime":"2026-05-24T00:02:45.630Z","album":"The Stranger","year":2008},{"official_position":282,"song":"Dancing With Myself","artist":"Billy Idol","day":"Sat May 23","time_et":"7:58 PM","fetchedAt":"2026-05-23T23:58:20.286Z","startTime":"2026-05-23T23:58:01.746Z","album":null,"year":null},{"official_position":283,"song":"Crazy Train","artist":"Ozzy Osbourne","day":"Sat May 23","time_et":"7:46 PM","fetchedAt":"2026-05-23T23:46:10.188Z","startTime":"2026-05-23T23:45:45.306Z","album":null,"year":1980},{"official_position":284,"song":"Take It To The Limit","artist":"EAGLES","day":"Sat May 23","time_et":"7:41 PM","fetchedAt":"2026-05-23T23:41:10.170Z","startTime":"2026-05-23T23:40:49.750Z","album":null,"year":null},{"official_position":285,"song":"Something","artist":"Beatles","day":"Sat May 23","time_et":"7:38 PM","fetchedAt":"2026-05-23T23:38:00.115Z","startTime":"2026-05-23T23:37:43.932Z","album":"The Beatles Tapes From The David Wigg Interviews","year":1990},{"official_position":286,"song":"ROCK THE CASBAH","artist":"THE CLASH","day":"Sat May 23","time_et":"7:34 PM","fetchedAt":"2026-05-23T23:34:20.120Z","startTime":"2026-05-23T23:33:59.841Z","album":"Rat Patrol From Fort Brag","year":1981},{"official_position":287,"song":"Burnin' For You","artist":"Blue Oyster Cult","day":"Sat May 23","time_et":"7:29 PM","fetchedAt":"2026-05-23T23:29:50.080Z","startTime":"2026-05-23T23:29:31.885Z","album":"Cult Classic","year":1994},{"official_position":288,"song":"Only Time Will Tell","artist":"ASIA","day":"Sat May 23","time_et":"7:17 PM","fetchedAt":"2026-05-23T23:17:39.961Z","startTime":"2026-05-23T23:17:21.280Z","album":null,"year":1982},{"official_position":289,"song":"IT'S MY LIFE","artist":"BON JOVI","day":"Sat May 23","time_et":"7:13 PM","fetchedAt":"2026-05-23T23:13:59.945Z","startTime":"2026-05-23T23:13:38.840Z","album":null,"year":null},{"official_position":290,"song":"A Horse With No Name","artist":"AMERICA","day":"Sat May 23","time_et":"7:09 PM","fetchedAt":"2026-05-23T23:09:49.885Z","startTime":"2026-05-23T23:09:30.252Z","album":null,"year":1971},{"official_position":291,"song":"AMANDA","artist":"Boston","day":"Sat May 23","time_et":"7:05 PM","fetchedAt":"2026-05-23T23:05:19.893Z","startTime":"2026-05-23T23:05:09.518Z","album":"One of These Nights","year":2000},{"official_position":292,"song":"Penny Lane","artist":"Beatles","day":"Sat May 23","time_et":"7:02 PM","fetchedAt":"2026-05-23T23:02:29.834Z","startTime":"2026-05-23T23:02:06.847Z","album":null,"year":null},{"official_position":293,"song":"Don't Look Back","artist":"Boston","day":"Sat May 23","time_et":"6:56 PM","fetchedAt":"2026-05-23T22:56:19.828Z","startTime":"2026-05-23T22:56:03.555Z","album":null,"year":null},{"official_position":294,"song":"China Grove","artist":"DOOBIE BROTHERS","day":"Sat May 23","time_et":"6:45 PM","fetchedAt":"2026-05-23T22:45:59.820Z","startTime":"2026-05-23T22:45:41.186Z","album":"The Captain and Me","year":1973},{"official_position":295,"song":"Smokin'","artist":"Boston","day":"Sat May 23","time_et":"6:41 PM","fetchedAt":"2026-05-23T22:41:49.818Z","startTime":"2026-05-23T22:41:22.231Z","album":"Boston","year":1976},{"official_position":296,"song":"Burnin' Sky","artist":"Bad Company","day":"Sat May 23","time_et":"6:36 PM","fetchedAt":"2026-05-23T22:36:29.792Z","startTime":"2026-05-23T22:36:13.926Z","album":"Burnin' Sky","year":1977},{"official_position":297,"song":"ALL YOU NEED IS LOVE","artist":"Beatles","day":"Sat May 23","time_et":"6:32 PM","fetchedAt":"2026-05-23T22:32:49.789Z","startTime":"2026-05-23T22:32:32.808Z","album":null,"year":null},{"official_position":298,"song":"CAN'T FIND MY WAY HOME","artist":"Blind Faith","day":"Sat May 23","time_et":"6:29 PM","fetchedAt":"2026-05-23T22:29:29.787Z","startTime":"2026-05-23T22:29:12.663Z","album":"Blind Faith","year":1969},{"official_position":299,"song":"TAKIN' CARE OF BUSINESS","artist":"Bachman-Turner Overdrive","day":"Sat May 23","time_et":"6:16 PM","fetchedAt":"2026-05-23T22:16:59.775Z","startTime":"2026-05-23T22:16:39.163Z","album":"Classics, Vol. 4","year":1990},{"official_position":300,"song":"Gypsy","artist":"FLEETWOOD MAC","day":"Sat May 23","time_et":"6:12 PM","fetchedAt":"2026-05-23T22:12:39.794Z","startTime":"2026-05-23T22:12:19.630Z","album":"Mirage","year":1982},{"official_position":301,"song":"FOR WHAT IT'S WORTH","artist":"BUFFALO SPRINGFIELD","day":"Sat May 23","time_et":"6:09 PM","fetchedAt":"2026-05-23T22:09:59.830Z","startTime":"2026-05-23T22:09:44.142Z","album":"Buffalo Springfield","year":1967},{"official_position":302,"song":"Lucy In The Sky With Diamonds","artist":"Beatles","day":"Sat May 23","time_et":"6:06 PM","fetchedAt":"2026-05-23T22:06:39.854Z","startTime":"2026-05-23T22:06:22.093Z","album":"Sgt. Pepper\u2019s Lonely Hearts Club Band","year":1967},{"official_position":303,"song":"Cheeseburger In Paradise","artist":"JIMMY BUFFETT","day":"Sat May 23","time_et":"6:03 PM","fetchedAt":"2026-05-23T22:03:39.753Z","startTime":"2026-05-23T22:03:20.337Z","album":null,"year":null},{"official_position":304,"song":"Same Old Song And Dance","artist":"Aerosmith","day":"Sat May 23","time_et":"5:59 PM","fetchedAt":"2026-05-23T21:59:49.769Z","startTime":"2026-05-23T21:59:29.570Z","album":null,"year":null},{"official_position":305,"song":"ELEANOR RIGBY","artist":"Beatles","day":"Sat May 23","time_et":"5:57 PM","fetchedAt":"2026-05-23T21:57:39.742Z","startTime":"2026-05-23T21:57:14.288Z","album":null,"year":null},{"official_position":306,"song":"TICKET TO RIDE","artist":"Beatles","day":"Sat May 23","time_et":"5:47 PM","fetchedAt":"2026-05-23T21:47:39.737Z","startTime":"2026-05-23T21:47:12.797Z","album":"Help!","year":1965},{"official_position":307,"song":"Aqualung","artist":"Jethro Tull","day":"Sat May 23","time_et":"5:40 PM","fetchedAt":"2026-05-23T21:40:59.707Z","startTime":"2026-05-23T21:40:36.328Z","album":null,"year":null},{"official_position":308,"song":"LONG TRAIN RUNNIN'","artist":"DOOBIE BROTHERS","day":"Sat May 23","time_et":"5:37 PM","fetchedAt":"2026-05-23T21:37:19.657Z","startTime":"2026-05-23T21:37:08.171Z","album":null,"year":null},{"official_position":309,"song":"BYE-BYE LOVE","artist":"CARS","day":"Sat May 23","time_et":"5:33 PM","fetchedAt":"2026-05-23T21:33:09.611Z","startTime":"2026-05-23T21:32:49.486Z","album":"The Cars","year":1978},{"official_position":310,"song":"Roadhouse Blues","artist":"Doors","day":"Sat May 23","time_et":"5:28 PM","fetchedAt":"2026-05-23T21:28:49.569Z","startTime":"2026-05-23T21:28:32.734Z","album":null,"year":null},{"official_position":311,"song":"My Best Friend's Girl","artist":"CARS","day":"Sat May 23","time_et":"5:17 PM","fetchedAt":"2026-05-23T21:17:19.471Z","startTime":"2026-05-23T21:17:09.936Z","album":"Heartbeat City","year":2025},{"official_position":312,"song":"Hit Me With Your Best Shot","artist":"PAT BENATAR","day":"Sat May 23","time_et":"5:14 PM","fetchedAt":"2026-05-23T21:14:39.430Z","startTime":"2026-05-23T21:14:22.223Z","album":null,"year":null},{"official_position":313,"song":"Born On The Bayou","artist":"Creedence Clearwater Revival","day":"Sat May 23","time_et":"5:09 PM","fetchedAt":"2026-05-23T21:09:19.410Z","startTime":"2026-05-23T21:09:07.754Z","album":null,"year":null},{"official_position":314,"song":"Evil Woman","artist":"ELECTRIC LIGHT ORCHESTRA","day":"Sat May 23","time_et":"5:05 PM","fetchedAt":"2026-05-23T21:05:19.385Z","startTime":"2026-05-23T21:04:55.121Z","album":null,"year":null},{"official_position":315,"song":"PROUD MARY","artist":"Creedence Clearwater Revival","day":"Sat May 23","time_et":"5:01 PM","fetchedAt":"2026-05-23T21:01:59.362Z","startTime":"2026-05-23T21:01:42.143Z","album":null,"year":null},{"official_position":316,"song":"I Want To Hold Your Hand","artist":"Beatles","day":"Sat May 23","time_et":"4:59 PM","fetchedAt":"2026-05-23T20:59:19.354Z","startTime":"2026-05-23T20:59:07.291Z","album":"Meet The Beatles!","year":1964},{"official_position":317,"song":"Cocaine","artist":"Eric Clapton","day":"Sat May 23","time_et":"4:49 PM","fetchedAt":"2026-05-23T20:49:09.317Z","startTime":"2026-05-23T20:48:46.613Z","album":null,"year":1977},{"official_position":318,"song":"Sharp Dressed Man","artist":"ZZ Top","day":"Sat May 23","time_et":"4:44 PM","fetchedAt":"2026-05-23T20:44:59.284Z","startTime":"2026-05-23T20:44:40.509Z","album":"Beer, Beards and Moore","year":2002},{"official_position":319,"song":"Eruption/You Really Got Me","artist":"Van Halen","day":"Sat May 23","time_et":"4:40 PM","fetchedAt":"2026-05-23T20:40:39.181Z","startTime":"2026-05-23T20:40:20.044Z","album":null,"year":null},{"official_position":320,"song":"I'D LOVE TO CHANGE THE WORLD","artist":"Ten Years After","day":"Sat May 23","time_et":"4:36 PM","fetchedAt":"2026-05-23T20:36:39.140Z","startTime":"2026-05-23T20:36:20.245Z","album":"A Space in Time","year":1972},{"official_position":321,"song":"Take It On The Run","artist":"REO SPEEDWAGON","day":"Sat May 23","time_et":"4:32 PM","fetchedAt":"2026-05-23T20:32:39.097Z","startTime":"2026-05-23T20:32:16.916Z","album":null,"year":1980},{"official_position":322,"song":"IT'S THE END OF THE WORLD AS WE KNOW IT(AND I FEEL FINE)","artist":"REM","day":"Sat May 23","time_et":"4:28 PM","fetchedAt":"2026-05-23T20:28:19.065Z","startTime":"2026-05-23T20:28:03.950Z","album":"Document","year":2003},{"official_position":323,"song":"Mary Jane's Last Dance","artist":"Tom Petty & The Heartbreakers","day":"Sat May 23","time_et":"4:16 PM","fetchedAt":"2026-05-23T20:16:18.947Z","startTime":"2026-05-23T20:15:58.528Z","album":null,"year":null},{"official_position":324,"song":"(BANG A GONG) GET IT ON","artist":"T. Rex","day":"Sat May 23","time_et":"4:11 PM","fetchedAt":"2026-05-23T20:11:58.911Z","startTime":"2026-05-23T20:11:33.870Z","album":null,"year":null},{"official_position":325,"song":"Happy","artist":"ROLLING STONES","day":"Sat May 23","time_et":"4:08 PM","fetchedAt":"2026-05-23T20:08:38.907Z","startTime":"2026-05-23T20:08:24.198Z","album":"Who The Hate Is Brian Jones","year":1995},{"official_position":326,"song":"ONE","artist":"U2","day":"Sat May 23","time_et":"4:04 PM","fetchedAt":"2026-05-23T20:04:08.916Z","startTime":"2026-05-23T20:03:49.123Z","album":null,"year":1991},{"official_position":327,"song":"IT'S ONLY ROCK 'N' ROLL (BUT I LIKE IT)","artist":"ROLLING STONES","day":"Sat May 23","time_et":"3:58 PM","fetchedAt":"2026-05-23T19:58:58.821Z","startTime":"2026-05-23T19:58:41.135Z","album":null,"year":null},{"official_position":328,"song":"RADIO GA GA","artist":"Queen","day":"Sat May 23","time_et":"3:46 PM","fetchedAt":"2026-05-23T19:46:28.781Z","startTime":"2026-05-23T19:46:09.706Z","album":null,"year":1984},{"official_position":329,"song":"Jumpin' Jack Flash","artist":"ROLLING STONES","day":"Sat May 23","time_et":"3:42 PM","fetchedAt":"2026-05-23T19:42:48.748Z","startTime":"2026-05-23T19:42:29.453Z","album":"Better Than the Real Rebirth","year":2000},{"official_position":330,"song":"The One I Love","artist":"REM","day":"Sat May 23","time_et":"3:39 PM","fetchedAt":"2026-05-23T19:39:38.754Z","startTime":"2026-05-23T19:39:18.829Z","album":null,"year":null},{"official_position":331,"song":"ANOTHER BRICK IN THE WALL","artist":"Pink Floyd","day":"Sat May 23","time_et":"3:34 PM","fetchedAt":"2026-05-23T19:34:28.727Z","startTime":"2026-05-23T19:34:10.595Z","album":null,"year":1979},{"official_position":332,"song":"D'YER MAK'ER","artist":"Led Zeppelin","day":"Sat May 23","time_et":"3:30 PM","fetchedAt":"2026-05-23T19:30:08.673Z","startTime":"2026-05-23T19:29:48.388Z","album":"Houses of the Holy","year":1973},{"official_position":333,"song":"Wild Horses","artist":"ROLLING STONES","day":"Sat May 23","time_et":"3:16 PM","fetchedAt":"2026-05-23T19:16:18.571Z","startTime":"2026-05-23T19:16:06.594Z","album":null,"year":1971},{"official_position":334,"song":"Once In A Lifetime","artist":"TALKING HEADS","day":"Sat May 23","time_et":"3:12 PM","fetchedAt":"2026-05-23T19:12:08.539Z","startTime":"2026-05-23T19:11:50.334Z","album":null,"year":1980},{"official_position":335,"song":"GREEN GRASS AND HIGH TIDES","artist":"Outlaws","day":"Sat May 23","time_et":"3:02 PM","fetchedAt":"2026-05-23T19:02:18.472Z","startTime":"2026-05-23T19:02:00.904Z","album":"Outlaws","year":1975},{"official_position":336,"song":"I STILL HAVEN'T FOUND WHAT I'M LOOKING FOR","artist":"U2","day":"Sat May 23","time_et":"2:57 PM","fetchedAt":"2026-05-23T18:57:48.428Z","startTime":"2026-05-23T18:57:30.715Z","album":null,"year":null},{"official_position":337,"song":"Closer To The Heart","artist":"Rush","day":"Sat May 23","time_et":"2:47 PM","fetchedAt":"2026-05-23T18:47:58.338Z","startTime":"2026-05-23T18:47:40.686Z","album":null,"year":1977},{"official_position":338,"song":"AIN'T TALKIN' BOUT LOVE","artist":"Van Halen","day":"Sat May 23","time_et":"2:43 PM","fetchedAt":"2026-05-23T18:43:58.311Z","startTime":"2026-05-23T18:43:46.647Z","album":null,"year":null},{"official_position":339,"song":"SUBDIVISIONS","artist":"Rush","day":"Sat May 23","time_et":"2:38 PM","fetchedAt":"2026-05-23T18:38:28.289Z","startTime":"2026-05-23T18:38:16.496Z","album":null,"year":1982},{"official_position":340,"song":"Better Man","artist":"PEARL JAM","day":"Sat May 23","time_et":"2:34 PM","fetchedAt":"2026-05-23T18:34:28.254Z","startTime":"2026-05-23T18:34:06.040Z","album":"Binaural","year":2000},{"official_position":341,"song":"Have A Cigar","artist":"Pink Floyd","day":"Sat May 23","time_et":"2:29 PM","fetchedAt":"2026-05-23T18:29:08.214Z","startTime":"2026-05-23T18:28:56.996Z","album":null,"year":1975},{"official_position":342,"song":"Here I Go Again","artist":"WHITESNAKE","day":"Sat May 23","time_et":"2:16 PM","fetchedAt":"2026-05-23T18:16:38.241Z","startTime":"2026-05-23T18:16:22.541Z","album":null,"year":1982},{"official_position":343,"song":"Money","artist":"Pink Floyd","day":"Sat May 23","time_et":"2:10 PM","fetchedAt":"2026-05-23T18:10:08.138Z","startTime":"2026-05-23T18:09:48.294Z","album":null,"year":1973},{"official_position":344,"song":"Frankenstein","artist":"Edgar Winter Group","day":"Sat May 23","time_et":"2:05 PM","fetchedAt":"2026-05-23T18:05:18.095Z","startTime":"2026-05-23T18:05:02.840Z","album":null,"year":null},{"official_position":345,"song":"BLACK COFFEE IN BED","artist":"SQUEEZE","day":"Sat May 23","time_et":"1:59 PM","fetchedAt":"2026-05-23T17:59:18.093Z","startTime":"2026-05-23T17:58:56.946Z","album":"Sweets From a Stranger","year":1982},{"official_position":346,"song":"WEREWOLVES OF LONDON","artist":"Warren Zevon","day":"Sat May 23","time_et":"1:48 PM","fetchedAt":"2026-05-23T17:48:48.028Z","startTime":"2026-05-23T17:48:25.190Z","album":null,"year":null},{"official_position":347,"song":"Tempted","artist":"SQUEEZE","day":"Sat May 23","time_et":"1:44 PM","fetchedAt":"2026-05-23T17:44:48.026Z","startTime":"2026-05-23T17:44:31.145Z","album":null,"year":null},{"official_position":348,"song":"SANTERIA","artist":"SUBLIME","day":"Sat May 23","time_et":"1:41 PM","fetchedAt":"2026-05-23T17:41:47.984Z","startTime":"2026-05-23T17:41:26.007Z","album":"Sublime","year":1996},{"official_position":349,"song":"Magic Man","artist":"HEART","day":"Sat May 23","time_et":"1:36 PM","fetchedAt":"2026-05-23T17:36:07.944Z","startTime":"2026-05-23T17:35:50.477Z","album":null,"year":1976},{"official_position":350,"song":"Love Hurts","artist":"Nazareth","day":"Sat May 23","time_et":"1:32 PM","fetchedAt":"2026-05-23T17:32:07.947Z","startTime":"2026-05-23T17:31:51.445Z","album":"Move Me","year":1994},{"official_position":351,"song":"Take the Long Way Home","artist":"SUPERTRAMP","day":"Sat May 23","time_et":"1:19 PM","fetchedAt":"2026-05-23T17:19:47.853Z","startTime":"2026-05-23T17:19:37.709Z","album":"Breakfast in America","year":1979},{"official_position":352,"song":"Immigrant Song","artist":"Led Zeppelin","day":"Sat May 23","time_et":"1:17 PM","fetchedAt":"2026-05-23T17:17:17.814Z","startTime":"2026-05-23T17:16:59.936Z","album":null,"year":1970},{"official_position":353,"song":"My Hero","artist":"Foo Fighters","day":"Sat May 23","time_et":"1:12 PM","fetchedAt":"2026-05-23T17:12:57.821Z","startTime":"2026-05-23T17:12:45.208Z","album":null,"year":null},{"official_position":354,"song":"Abacab","artist":"GENESIS","day":"Sat May 23","time_et":"1:06 PM","fetchedAt":"2026-05-23T17:06:07.734Z","startTime":"2026-05-23T17:05:48.853Z","album":"Abacab","year":1981},{"official_position":355,"song":"Black Dog","artist":"Led Zeppelin","day":"Sat May 23","time_et":"1:01 PM","fetchedAt":"2026-05-23T17:01:17.729Z","startTime":"2026-05-23T17:01:02.984Z","album":null,"year":1971},{"official_position":356,"song":"Rock And Roll","artist":"Led Zeppelin","day":"Not captured","time_et":"Not captured","fetchedAt":"","startTime":"","album":null,"year":1971},{"official_position":357,"song":"Going To California","artist":"Led Zeppelin","day":"Sat May 23","time_et":"12:47 PM","fetchedAt":"2026-05-23T16:47:07.597Z","startTime":"2026-05-23T16:46:46.545Z","album":null,"year":null},{"official_position":358,"song":"ME AND BOBBY MCGEE","artist":"Janis Joplin","day":"Sat May 23","time_et":"12:42 PM","fetchedAt":"2026-05-23T16:42:37.558Z","startTime":"2026-05-23T16:42:09.887Z","album":null,"year":null},{"official_position":359,"song":"LITHIUM","artist":"NIRVANA","day":"Sat May 23","time_et":"12:38 PM","fetchedAt":"2026-05-23T16:38:07.627Z","startTime":"2026-05-23T16:37:49.274Z","album":"Extraordinary","year":2005},{"official_position":360,"song":"FAITHFULLY","artist":"Journey","day":"Sat May 23","time_et":"12:33 PM","fetchedAt":"2026-05-23T16:33:27.473Z","startTime":"2026-05-23T16:33:06.428Z","album":null,"year":1983},{"official_position":361,"song":"THE LOCO-MOTION","artist":"Grand Funk Railroad","day":"Sat May 23","time_et":"12:30 PM","fetchedAt":"2026-05-23T16:30:37.467Z","startTime":"2026-05-23T16:30:16.347Z","album":"Shinin\u2019 On","year":1974},{"official_position":362,"song":"Allentown","artist":"Billy Joel","day":"Sat May 23","time_et":"12:18 PM","fetchedAt":"2026-05-23T16:18:47.352Z","startTime":"2026-05-23T16:18:31.496Z","album":null,"year":null},{"official_position":363,"song":"Rhiannon","artist":"FLEETWOOD MAC","day":"Sat May 23","time_et":"12:14 PM","fetchedAt":"2026-05-23T16:14:37.316Z","startTime":"2026-05-23T16:14:25.845Z","album":"Fleetwood Mac","year":1975},{"official_position":364,"song":"Hot Blooded","artist":"Foreigner","day":"Sat May 23","time_et":"12:10 PM","fetchedAt":"2026-05-23T16:10:17.317Z","startTime":"2026-05-23T16:10:05.740Z","album":"Can\u2019t Slow Down","year":2010},{"official_position":365,"song":"GOOD RIDDANCE (TIME OF YOUR LIFE)","artist":"GREEN DAY","day":"Sat May 23","time_et":"12:07 PM","fetchedAt":"2026-05-23T16:07:47.262Z","startTime":"2026-05-23T16:07:34.733Z","album":"Warning (25th Anniversary Deluxe Edition)","year":2025},{"official_position":366,"song":"Long Cool Woman (In A Black Dress)","artist":"Hollies","day":"Sat May 23","time_et":"12:04 PM","fetchedAt":"2026-05-23T16:04:37.234Z","startTime":"2026-05-23T16:04:12.158Z","album":null,"year":null},{"official_position":367,"song":"Fool In The Rain","artist":"Led Zeppelin","day":"Sat May 23","time_et":"11:58 AM","fetchedAt":"2026-05-23T15:58:17.233Z","startTime":"2026-05-23T15:58:03.090Z","album":"In Through the Out Door","year":1979},{"official_position":368,"song":"All You Zombies","artist":"Hooters","day":"Sat May 23","time_et":"11:44 AM","fetchedAt":"2026-05-23T15:44:17.198Z","startTime":"2026-05-23T15:43:59.519Z","album":"Amore","year":1983},{"official_position":369,"song":"Kickstart My Heart","artist":"Motley Crue","day":"Sat May 23","time_et":"11:39 AM","fetchedAt":"2026-05-23T15:39:37.179Z","startTime":"2026-05-23T15:39:15.620Z","album":null,"year":null},{"official_position":370,"song":"BARRACUDA","artist":"HEART","day":"Sat May 23","time_et":"11:34 AM","fetchedAt":"2026-05-23T15:34:57.156Z","startTime":"2026-05-23T15:34:35.178Z","album":null,"year":1977},{"official_position":371,"song":"Hey Hey What Can I Do","artist":"Led Zeppelin","day":"Sat May 23","time_et":"11:22 AM","fetchedAt":"2026-05-23T15:22:47.103Z","startTime":"2026-05-23T15:22:38.283Z","album":"Coda","year":1993},{"official_position":372,"song":"CAN'T YOU SEE","artist":"Marshall Tucker Band","day":"Sat May 23","time_et":"11:16 AM","fetchedAt":"2026-05-23T15:16:47.098Z","startTime":"2026-05-23T15:16:34.183Z","album":null,"year":null},{"official_position":373,"song":"Purple Haze","artist":"Jimi Hendrix","day":"Sat May 23","time_et":"11:13 AM","fetchedAt":"2026-05-23T15:13:37.062Z","startTime":"2026-05-23T15:13:27.000Z","album":null,"year":1967},{"official_position":374,"song":"TWILIGHT ZONE","artist":"Golden Earring","day":"Sat May 23","time_et":"11:05 AM","fetchedAt":"2026-05-23T15:05:57.065Z","startTime":"2026-05-23T15:05:39.338Z","album":null,"year":null},{"official_position":375,"song":"Lola","artist":"Kinks","day":"Sat May 23","time_et":"Not captured","fetchedAt":"","startTime":"","album":null,"year":1970},{"official_position":376,"song":"Come Dancing","artist":"Kinks","day":"Sat May 23","time_et":"7:59 AM","fetchedAt":"2026-05-23T11:59:25.260Z","startTime":"2026-05-23T11:58:58.526Z","album":null,"year":null},{"official_position":377,"song":"Somebody","artist":"BRYAN ADAMS","day":"Sat May 23","time_et":"7:47 AM","fetchedAt":"2026-05-23T11:47:05.240Z","startTime":"2026-05-23T11:46:45.298Z","album":"Reckless","year":2014},{"official_position":378,"song":"FOREVER MAN","artist":"Eric Clapton","day":"Sat May 23","time_et":"7:43 AM","fetchedAt":"2026-05-23T11:43:45.209Z","startTime":"2026-05-23T11:43:34.481Z","album":"Behind the Sun","year":1985},{"official_position":379,"song":"Knockin' On Heaven's Door","artist":"Bob Dylan","day":"Sat May 23","time_et":"7:41 AM","fetchedAt":"2026-05-23T11:41:25.120Z","startTime":"2026-05-23T11:41:13.028Z","album":null,"year":1973},{"official_position":380,"song":"SISTER GOLDEN HAIR","artist":"AMERICA","day":"Sat May 23","time_et":"7:38 AM","fetchedAt":"2026-05-23T11:38:05.085Z","startTime":"2026-05-23T11:37:40.639Z","album":"Hearts","year":1975},{"official_position":381,"song":"Gold Dust Woman","artist":"FLEETWOOD MAC","day":"Sat May 23","time_et":"7:33 AM","fetchedAt":"2026-05-23T11:33:05.040Z","startTime":"2026-05-23T11:32:41.657Z","album":"Next Stop: Main Road","year":1991},{"official_position":382,"song":"In The Air Tonight","artist":"PHIL COLLINS","day":"Sat May 23","time_et":"7:27 AM","fetchedAt":"2026-05-23T11:27:14.989Z","startTime":"2026-05-23T11:26:59.843Z","album":null,"year":1981},{"official_position":383,"song":"MAKE ME SMILE","artist":"CHICAGO","day":"Sat May 23","time_et":"7:14 AM","fetchedAt":"2026-05-23T11:14:24.840Z","startTime":"2026-05-23T11:14:07.875Z","album":null,"year":null},{"official_position":384,"song":"Rock And Roll Fantasy","artist":"Bad Company","day":"Sat May 23","time_et":"7:11 AM","fetchedAt":"2026-05-23T11:11:04.813Z","startTime":"2026-05-23T11:10:47.972Z","album":"Welcome To The Show!","year":1991},{"official_position":385,"song":"NEW KID IN TOWN","artist":"EAGLES","day":"Sat May 23","time_et":"7:05 AM","fetchedAt":"2026-05-23T11:05:44.771Z","startTime":"2026-05-23T11:05:26.746Z","album":null,"year":1976},{"official_position":386,"song":"OB-LA-DI, OB-LA-DA","artist":"Beatles","day":"Sat May 23","time_et":"7:02 AM","fetchedAt":"2026-05-23T11:02:24.768Z","startTime":"2026-05-23T11:02:09.175Z","album":null,"year":null},{"official_position":387,"song":"What It Takes","artist":"Aerosmith","day":"Sat May 23","time_et":"6:56 AM","fetchedAt":"2026-05-23T10:56:54.684Z","startTime":"2026-05-23T10:56:38.594Z","album":"Pump","year":1989},{"official_position":388,"song":"Shoot To Thrill","artist":"AC/DC","day":"Sat May 23","time_et":"6:43 AM","fetchedAt":"2026-05-23T10:43:44.646Z","startTime":"2026-05-23T10:43:30.690Z","album":null,"year":1980},{"official_position":389,"song":"I SAW HER STANDING THERE","artist":"Beatles","day":"Sat May 23","time_et":"6:40 AM","fetchedAt":"2026-05-23T10:40:54.527Z","startTime":"2026-05-23T10:40:35.210Z","album":"Meet The Beatles!","year":1964},{"official_position":390,"song":"THE NIGHT THEY DROVE OLD DIXIE DOWN","artist":"THE BAND","day":"Sat May 23","time_et":"6:37 AM","fetchedAt":"2026-05-23T10:37:24.496Z","startTime":"2026-05-23T10:37:08.856Z","album":null,"year":null},{"official_position":391,"song":"Love Her Madly","artist":"Doors","day":"Sat May 23","time_et":"6:33 AM","fetchedAt":"2026-05-23T10:33:44.521Z","startTime":"2026-05-23T10:33:35.088Z","album":"L.A. Woman","year":2007},{"official_position":392,"song":"WOMAN FROM TOKYO","artist":"Deep Purple","day":"Sat May 23","time_et":"6:19 AM","fetchedAt":"2026-05-23T10:19:44.355Z","startTime":"2026-05-23T10:19:23.125Z","album":null,"year":null},{"official_position":393,"song":"Janie's Got A Gun","artist":"Aerosmith","day":"Sat May 23","time_et":"6:14 AM","fetchedAt":"2026-05-23T10:14:14.269Z","startTime":"2026-05-23T10:14:01.781Z","album":"Pump","year":1989},{"official_position":394,"song":"FOOLIN'","artist":"DEF LEPPARD","day":"Sat May 23","time_et":"6:09 AM","fetchedAt":"2026-05-23T10:09:14.258Z","startTime":"2026-05-23T10:09:00.789Z","album":null,"year":null},{"official_position":395,"song":"SATURDAY IN THE PARK","artist":"CHICAGO","day":"Sat May 23","time_et":"6:05 AM","fetchedAt":"2026-05-23T10:05:24.276Z","startTime":"2026-05-23T10:05:08.959Z","album":null,"year":null},{"official_position":396,"song":"Photograph","artist":"Def Leppard","day":"Not captured","time_et":"Not captured","fetchedAt":"","startTime":"","album":null,"year":1983},{"official_position":397,"song":"LET'S DANCE","artist":"DAVID BOWIE","day":"Fri May 22","time_et":"11:58 PM","fetchedAt":"2026-05-23T03:58:50.602Z","startTime":"2026-05-23T03:58:31.985Z","album":null,"year":1983},{"official_position":398,"song":"YOU AIN'T SEEN NOTHING YET","artist":"Bachman-Turner Overdrive","day":"Fri May 22","time_et":"11:54 PM","fetchedAt":"2026-05-23T03:54:50.532Z","startTime":"2026-05-23T03:54:32.807Z","album":null,"year":null},{"official_position":399,"song":"LAY DOWN SALLY","artist":"Eric Clapton","day":"Fri May 22","time_et":"11:51 PM","fetchedAt":"2026-05-23T03:51:00.543Z","startTime":"2026-05-23T03:50:50.267Z","album":null,"year":1977},{"official_position":400,"song":"DREAM POLICE","artist":"Cheap Trick","day":"Fri May 22","time_et":"11:40 PM","fetchedAt":"2026-05-23T03:40:20.491Z","startTime":"2026-05-23T03:40:02.388Z","album":null,"year":null},{"official_position":401,"song":"A Hard Day's Night","artist":"Beatles","day":"Fri May 22","time_et":"11:37 PM","fetchedAt":"2026-05-23T03:37:50.492Z","startTime":"2026-05-23T03:37:28.515Z","album":null,"year":null},{"official_position":402,"song":"Walk Of Life","artist":"Dire Straits","day":"Fri May 22","time_et":"11:33 PM","fetchedAt":"2026-05-23T03:33:30.505Z","startTime":"2026-05-23T03:33:14.820Z","album":null,"year":null},{"official_position":403,"song":"ONE BOURBON, ONE SCOTCH, ONE BEER","artist":"George Thorogood","day":"Fri May 22","time_et":"11:18 PM","fetchedAt":"2026-05-23T03:18:10.474Z","startTime":"2026-05-23T03:17:56.518Z","album":"George Thorogood and the Delaware Destroyers","year":2015},{"official_position":404,"song":"We Gotta Get Out Of This Place","artist":"The Animals","day":"Fri May 22","time_et":"11:14 PM","fetchedAt":"2026-05-23T03:14:50.438Z","startTime":"2026-05-23T03:14:39.169Z","album":"Animal Tracks","year":2016},{"official_position":405,"song":"Call Me","artist":"BLONDIE","day":"Fri May 22","time_et":"11:11 PM","fetchedAt":"2026-05-23T03:11:20.533Z","startTime":"2026-05-23T03:11:06.103Z","album":"New York: A Mix Odyssey","year":2004},{"official_position":406,"song":"Under Pressure","artist":"QUEEN [+] DAVID BOWIE","day":"Fri May 22","time_et":"11:07 PM","fetchedAt":"2026-05-23T03:07:20.447Z","startTime":"2026-05-23T03:07:05.801Z","album":"Technoshock 9","year":2001},{"official_position":407,"song":"Roll With The Changes","artist":"REO SPEEDWAGON","day":"Fri May 22","time_et":"11:01 PM","fetchedAt":"2026-05-23T03:01:30.411Z","startTime":"2026-05-23T03:01:20.120Z","album":null,"year":1978},{"official_position":408,"song":"Yours Is No Disgrace","artist":"YES","day":"Fri May 22","time_et":"10:44 PM","fetchedAt":"2026-05-23T02:44:40.449Z","startTime":"2026-05-23T02:44:22.807Z","album":"FirstSteps","year":1991},{"official_position":409,"song":"Emotional Rescue","artist":"ROLLING STONES","day":"Fri May 22","time_et":"10:39 PM","fetchedAt":"2026-05-23T02:39:00.340Z","startTime":"2026-05-23T02:38:43.838Z","album":null,"year":1980},{"official_position":410,"song":"RUNNING WITH THE DEVIL","artist":"Van Halen","day":"Fri May 22","time_et":"10:35 PM","fetchedAt":"2026-05-23T02:35:20.358Z","startTime":"2026-05-23T02:35:06.533Z","album":null,"year":null},{"official_position":411,"song":"Dirty Work","artist":"Steely Dan","day":"Fri May 22","time_et":"10:32 PM","fetchedAt":"2026-05-23T02:32:20.349Z","startTime":"2026-05-23T02:32:00.736Z","album":"Can\u2019t Buy a Thrill","year":1972},{"official_position":412,"song":"DREAM WEAVER","artist":"Gary Wright","day":"Fri May 22","time_et":"10:21 PM","fetchedAt":"2026-05-23T02:21:20.308Z","startTime":"2026-05-23T02:20:53.337Z","album":"The Dream Weaver","year":1975},{"official_position":413,"song":"Reeling In The Years","artist":"Steely Dan","day":"Fri May 22","time_et":"10:16 PM","fetchedAt":"2026-05-23T02:16:50.326Z","startTime":"2026-05-23T02:16:24.942Z","album":"Spin 1ne 2wo","year":1993},{"official_position":414,"song":"THE RISING","artist":"Bruce Springsteen","day":"Fri May 22","time_et":"10:12 PM","fetchedAt":"2026-05-23T02:12:00.329Z","startTime":"2026-05-23T02:11:40.302Z","album":null,"year":null},{"official_position":415,"song":"Renegade","artist":"Styx","day":"Fri May 22","time_et":"10:07 PM","fetchedAt":"2026-05-23T02:07:40.292Z","startTime":"2026-05-23T02:07:26.053Z","album":"Pieces of Eight","year":1978},{"official_position":416,"song":"Black Hole Sun","artist":"SOUNDGARDEN","day":"Fri May 22","time_et":"10:02 PM","fetchedAt":"2026-05-23T02:02:20.273Z","startTime":"2026-05-23T02:02:02.673Z","album":"King Animal","year":2013},{"official_position":417,"song":"Too Much Time On My Hands","artist":"Styx","day":"Fri May 22","time_et":"9:50 PM","fetchedAt":"2026-05-23T01:50:40.258Z","startTime":"2026-05-23T01:50:20.848Z","album":"Paradise Theatre","year":1981},{"official_position":418,"song":"Rocky Mountain Way","artist":"Joe Walsh","day":"Fri May 22","time_et":"9:45 PM","fetchedAt":"2026-05-23T01:45:20.272Z","startTime":"2026-05-23T01:45:08.001Z","album":null,"year":null},{"official_position":419,"song":"Hello It's Me","artist":"Todd Rundgren","day":"Fri May 22","time_et":"9:41 PM","fetchedAt":"2026-05-23T01:41:00.302Z","startTime":"2026-05-23T01:40:45.008Z","album":"Something / Anything?","year":1995},{"official_position":420,"song":"No Surrender","artist":"Bruce Springsteen","day":"Fri May 22","time_et":"9:37 PM","fetchedAt":"2026-05-23T01:37:00.248Z","startTime":"2026-05-23T01:36:44.732Z","album":null,"year":null},{"official_position":421,"song":"GREEN-EYED LADY","artist":"Sugarloaf","day":"Fri May 22","time_et":"9:30 PM","fetchedAt":"2026-05-23T01:30:00.241Z","startTime":"2026-05-23T01:29:43.030Z","album":"Sugarloaf","year":1970},{"official_position":422,"song":"LONG DISTANCE RUN AROUND/FISH","artist":"YES","day":"Fri May 22","time_et":"9:16 PM","fetchedAt":"2026-05-23T01:16:20.206Z","startTime":"2026-05-23T01:16:03.501Z","album":"Magnification","year":2001},{"official_position":423,"song":"Goodbye Stranger","artist":"SUPERTRAMP","day":"Fri May 22","time_et":"9:10 PM","fetchedAt":"2026-05-23T01:10:40.167Z","startTime":"2026-05-23T01:10:17.971Z","album":"Breakfast in America","year":1979},{"official_position":424,"song":"Old Man","artist":"Neil Young","day":"Fri May 22","time_et":"9:07 PM","fetchedAt":"2026-05-23T01:07:10.178Z","startTime":"2026-05-23T01:06:48.237Z","album":null,"year":1972},{"official_position":425,"song":"Don't Do Me Like That","artist":"Tom Petty & The Heartbreakers","day":"Fri May 22","time_et":"9:04 PM","fetchedAt":"2026-05-23T01:04:20.166Z","startTime":"2026-05-23T01:04:04.084Z","album":"Damn the Torpedoes","year":1979},{"official_position":426,"song":"Smooth","artist":"SANTANA","day":"Fri May 22","time_et":"8:59 PM","fetchedAt":"2026-05-23T00:59:30.128Z","startTime":"2026-05-23T00:59:09.045Z","album":"Supernatural","year":2010},{"official_position":427,"song":"Refugee","artist":"Tom Petty & The Heartbreakers","day":"Fri May 22","time_et":"8:48 PM","fetchedAt":"2026-05-23T00:48:50.097Z","startTime":"2026-05-23T00:48:24.175Z","album":null,"year":1980},{"official_position":428,"song":"OLD TIME ROCK & ROLL","artist":"Bob Seger","day":"Fri May 22","time_et":"8:45 PM","fetchedAt":"2026-05-23T00:45:10.129Z","startTime":"2026-05-23T00:45:01.637Z","album":null,"year":null},{"official_position":429,"song":"LIFE DURING WARTIME","artist":"TALKING HEADS","day":"Fri May 22","time_et":"8:41 PM","fetchedAt":"2026-05-23T00:41:40.059Z","startTime":"2026-05-23T00:41:25.958Z","album":"The Post\u2010Punk Legacy","year":2006},{"official_position":430,"song":"Us And Them","artist":"Pink Floyd","day":"Fri May 22","time_et":"8:34 PM","fetchedAt":"2026-05-23T00:34:29.987Z","startTime":"2026-05-23T00:34:05.662Z","album":null,"year":1973},{"official_position":431,"song":"The Waiting","artist":"Tom Petty & The Heartbreakers","day":"Fri May 22","time_et":"8:30 PM","fetchedAt":"2026-05-23T00:30:19.939Z","startTime":"2026-05-23T00:30:04.128Z","album":null,"year":null},{"official_position":432,"song":"LIFE'S BEEN GOOD","artist":"Joe Walsh","day":"Fri May 22","time_et":"8:14 PM","fetchedAt":"2026-05-23T00:14:39.788Z","startTime":"2026-05-23T00:14:19.503Z","album":"Classics, Vol. 4","year":1990},{"official_position":433,"song":"Back On The Chain Gang","artist":"PRETENDERS","day":"Fri May 22","time_et":"8:10 PM","fetchedAt":"2026-05-23T00:10:39.736Z","startTime":"2026-05-23T00:10:28.628Z","album":null,"year":null},{"official_position":434,"song":"Glory Days","artist":"Bruce Springsteen","day":"Fri May 22","time_et":"8:06 PM","fetchedAt":"2026-05-23T00:06:29.715Z","startTime":"2026-05-23T00:06:13.657Z","album":null,"year":null},{"official_position":435,"song":"JEREMY","artist":"PEARL JAM","day":"Fri May 22","time_et":"8:01 PM","fetchedAt":"2026-05-23T00:01:09.640Z","startTime":"2026-05-23T00:00:54.764Z","album":null,"year":1991},{"official_position":436,"song":"Pinball Wizard","artist":"Who","day":"Fri May 22","time_et":"7:57 PM","fetchedAt":"2026-05-22T23:57:49.641Z","startTime":"2026-05-22T23:57:39.792Z","album":null,"year":1969},{"official_position":437,"song":"Bad To The Bone","artist":"George Thorogood","day":"Fri May 22","time_et":"7:45 PM","fetchedAt":"2026-05-22T23:45:39.487Z","startTime":"2026-05-22T23:45:21.721Z","album":null,"year":1982},{"official_position":438,"song":"Prove It All Night","artist":"Bruce Springsteen","day":"Fri May 22","time_et":"7:41 PM","fetchedAt":"2026-05-22T23:41:49.529Z","startTime":"2026-05-22T23:41:34.451Z","album":null,"year":null},{"official_position":439,"song":"Shine","artist":"Collective Soul","day":"Fri May 22","time_et":"7:36 PM","fetchedAt":"2026-05-22T23:36:39.417Z","startTime":"2026-05-22T23:36:20.987Z","album":"Dosage","year":1999},{"official_position":440,"song":"TAKE ME HOME TONIGHT (BE MY BABY)","artist":"EDDIE MONEY","day":"Fri May 22","time_et":"7:33 PM","fetchedAt":"2026-05-22T23:33:19.422Z","startTime":"2026-05-22T23:32:52.501Z","album":"Can\u2019t Hold Back","year":1986},{"official_position":441,"song":"Who Do You Love","artist":"George Thorogood","day":"Fri May 22","time_et":"7:20 PM","fetchedAt":"2026-05-22T23:20:59.339Z","startTime":"2026-05-22T23:20:39.232Z","album":"Move It On Over","year":1978},{"official_position":442,"song":"Owner Of A Lonely Heart","artist":"YES","day":"Fri May 22","time_et":"7:16 PM","fetchedAt":"2026-05-22T23:16:19.230Z","startTime":"2026-05-22T23:16:03.347Z","album":null,"year":1983},{"official_position":443,"song":"AFRICA","artist":"TOTO","day":"Fri May 22","time_et":"7:11 PM","fetchedAt":"2026-05-22T23:11:19.196Z","startTime":"2026-05-22T23:11:08.214Z","album":null,"year":1982},{"official_position":444,"song":"Heart Of Gold","artist":"Neil Young","day":"Fri May 22","time_et":"7:08 PM","fetchedAt":"2026-05-22T23:08:19.165Z","startTime":"2026-05-22T23:08:00.263Z","album":null,"year":1972},{"official_position":445,"song":"FEELIN' ALRIGHT","artist":"Traffic","day":"Fri May 22","time_et":"7:04 PM","fetchedAt":"2026-05-22T23:04:09.159Z","startTime":"2026-05-22T23:03:50.817Z","album":"Traffic","year":1968},{"official_position":446,"song":"BLITZKRIEG BOP","artist":"Ramones","day":"Fri May 22","time_et":"6:53 PM","fetchedAt":"2026-05-22T22:53:49.061Z","startTime":"2026-05-22T22:53:35.144Z","album":null,"year":null},{"official_position":447,"song":"Handle with Care","artist":"Traveling Wilburys","day":"Fri May 22","time_et":"6:50 PM","fetchedAt":"2026-05-22T22:50:29.111Z","startTime":"2026-05-22T22:50:17.809Z","album":"Traveling Wilburys, Vol. 1","year":1988},{"official_position":448,"song":"Beast Of Burden","artist":"ROLLING STONES","day":"Fri May 22","time_et":"6:46 PM","fetchedAt":"2026-05-22T22:46:18.994Z","startTime":"2026-05-22T22:45:54.728Z","album":null,"year":1978},{"official_position":449,"song":"Black Magic Woman/Gypsy Queen","artist":"SANTANA","day":"Fri May 22","time_et":"6:40 PM","fetchedAt":"2026-05-22T22:40:48.961Z","startTime":"2026-05-22T22:40:31.673Z","album":null,"year":null},{"official_position":450,"song":"Stay With Me","artist":"FACES [+] ROD STEWART","day":"Fri May 22","time_et":"6:36 PM","fetchedAt":"2026-05-22T22:36:08.922Z","startTime":"2026-05-22T22:35:53.701Z","album":"Stone Blue","year":1978},{"official_position":451,"song":"Home Sweet Home","artist":"Motley Crue","day":"Fri May 22","time_et":"6:23 PM","fetchedAt":"2026-05-22T22:23:28.806Z","startTime":"2026-05-22T22:23:10.491Z","album":"Theatre of Pain","year":1985},{"official_position":452,"song":"RACING IN THE STREET","artist":"Bruce Springsteen","day":"Fri May 22","time_et":"6:16 PM","fetchedAt":"2026-05-22T22:16:48.730Z","startTime":"2026-05-22T22:16:27.370Z","album":null,"year":null},{"official_position":453,"song":"MONDAY MORNING","artist":"FLEETWOOD MAC","day":"Fri May 22","time_et":"6:13 PM","fetchedAt":"2026-05-22T22:13:48.720Z","startTime":"2026-05-22T22:13:37.942Z","album":"Fleetwood Mac","year":1975},{"official_position":454,"song":"COME AS YOU ARE","artist":"Nirvana","day":"Fri May 22","time_et":"6:10 PM","fetchedAt":"2026-05-22T22:10:18.710Z","startTime":"2026-05-22T22:09:59.190Z","album":null,"year":1991},{"official_position":455,"song":"Babe I'm Gonna Leave You","artist":"Led Zeppelin","day":"Fri May 22","time_et":"6:03 PM","fetchedAt":"2026-05-22T22:03:28.643Z","startTime":"2026-05-22T22:03:18.739Z","album":null,"year":null},{"official_position":456,"song":"FOLLOW YOU FOLLOW ME","artist":"GENESIS","day":"Fri May 22","time_et":"5:59 PM","fetchedAt":"2026-05-22T21:59:48.617Z","startTime":"2026-05-22T21:59:24.411Z","album":null,"year":null},{"official_position":457,"song":"MONA LISAS & MAD HATTERS","artist":"ELTON JOHN","day":"Fri May 22","time_et":"5:48 PM","fetchedAt":"2026-05-22T21:48:08.524Z","startTime":"2026-05-22T21:47:57.100Z","album":"Honky Ch\u00e2teau","year":1972},{"official_position":458,"song":"Hey Joe","artist":"Jimi Hendrix","day":"Fri May 22","time_et":"5:44 PM","fetchedAt":"2026-05-22T21:44:38.514Z","startTime":"2026-05-22T21:44:25.549Z","album":null,"year":null},{"official_position":459,"song":"WHAT IS LIFE","artist":"GEORGE HARRISON","day":"Fri May 22","time_et":"5:40 PM","fetchedAt":"2026-05-22T21:40:28.463Z","startTime":"2026-05-22T21:40:09.234Z","album":null,"year":null},{"official_position":460,"song":"The Ocean","artist":"Led Zeppelin","day":"Fri May 22","time_et":"5:35 PM","fetchedAt":"2026-05-22T21:35:48.428Z","startTime":"2026-05-22T21:35:37.463Z","album":null,"year":null},{"official_position":461,"song":"And We Danced","artist":"Hooters","day":"Fri May 22","time_et":"5:32 PM","fetchedAt":"2026-05-22T21:32:18.468Z","startTime":"2026-05-22T21:32:01.909Z","album":"Nervous Night","year":1988},{"official_position":462,"song":"Piece Of My Heart","artist":"Janis Joplin","day":"Fri May 22","time_et":"5:22 PM","fetchedAt":"2026-05-22T21:22:08.331Z","startTime":"2026-05-22T21:21:40.999Z","album":null,"year":null},{"official_position":463,"song":"Sledgehammer","artist":"PETER GABRIEL","day":"Fri May 22","time_et":"5:16 PM","fetchedAt":"2026-05-22T21:16:58.297Z","startTime":"2026-05-22T21:16:45.547Z","album":"So","year":2012},{"official_position":464,"song":"Once Bitten Twice Shy","artist":"GREAT WHITE","day":"Fri May 22","time_et":"5:11 PM","fetchedAt":"2026-05-22T21:11:58.290Z","startTime":"2026-05-22T21:11:34.604Z","album":"Recover","year":2007},{"official_position":465,"song":"ALL THE YOUNG DUDES","artist":"Mott The Hoople","day":"Fri May 22","time_et":"5:08 PM","fetchedAt":"2026-05-22T21:08:18.237Z","startTime":"2026-05-22T21:08:03.804Z","album":"Extraordinary","year":2005},{"official_position":466,"song":"I LOVE ROCK 'N ROLL","artist":"Joan Jett & The Blackhearts","day":"Fri May 22","time_et":"5:05 PM","fetchedAt":"2026-05-22T21:05:18.215Z","startTime":"2026-05-22T21:05:03.667Z","album":"I Love Rock \u2019n\u2019 Roll","year":1981},{"official_position":467,"song":"Misty Mountain Hop","artist":"Led Zeppelin","day":"Fri May 22","time_et":"5:00 PM","fetchedAt":"2026-05-22T21:00:48.201Z","startTime":"2026-05-22T21:00:30.027Z","album":"[Led Zeppelin IV]","year":1971},{"official_position":468,"song":"INSTANT KARMA!","artist":"JOHN LENNON","day":"Fri May 22","time_et":"4:50 PM","fetchedAt":"2026-05-22T20:50:48.107Z","startTime":"2026-05-22T20:50:34.082Z","album":null,"year":null},{"official_position":469,"song":"Bark At The Moon","artist":"Ozzy Osbourne","day":"Fri May 22","time_et":"4:43 PM","fetchedAt":"2026-05-22T20:43:18.041Z","startTime":"2026-05-22T20:42:59.957Z","album":null,"year":1983},{"official_position":470,"song":"Dixie Chicken","artist":"Little Feat","day":"Fri May 22","time_et":"4:39 PM","fetchedAt":"2026-05-22T20:39:38.005Z","startTime":"2026-05-22T20:39:17.188Z","album":"Back on the Road","year":1991},{"official_position":471,"song":"THE LIVING YEARS","artist":"Mike + The Mechanics","day":"Fri May 22","time_et":"4:35 PM","fetchedAt":"2026-05-22T20:35:07.958Z","startTime":"2026-05-22T20:34:52.364Z","album":"Out of the Blue","year":2019},{"official_position":472,"song":"Lightning Crashes","artist":"Live","day":"Fri May 22","time_et":"4:29 PM","fetchedAt":"2026-05-22T20:29:47.975Z","startTime":"2026-05-22T20:29:33.424Z","album":null,"year":null},{"official_position":473,"song":"Shot In The Dark","artist":"Ozzy Osbourne","day":"Fri May 22","time_et":"4:18 PM","fetchedAt":"2026-05-22T20:18:07.831Z","startTime":"2026-05-22T20:17:44.337Z","album":"The Ultimate Sin","year":1986},{"official_position":474,"song":"Alone","artist":"HEART","day":"Fri May 22","time_et":"4:14 PM","fetchedAt":"2026-05-22T20:14:17.760Z","startTime":"2026-05-22T20:14:01.789Z","album":null,"year":1987},{"official_position":475,"song":"Heart And Soul","artist":"Huey Lewis & The News","day":"Fri May 22","time_et":"4:10 PM","fetchedAt":"2026-05-22T20:10:07.707Z","startTime":"2026-05-22T20:09:52.372Z","album":null,"year":null},{"official_position":476,"song":"Stone In Love","artist":"Journey","day":"Fri May 22","time_et":"4:05 PM","fetchedAt":"2026-05-22T20:05:57.677Z","startTime":"2026-05-22T20:05:32.918Z","album":null,"year":null},{"official_position":477,"song":"You May Be Right","artist":"Billy Joel","day":"Fri May 22","time_et":"4:01 PM","fetchedAt":"2026-05-22T20:01:47.602Z","startTime":"2026-05-22T20:01:31.240Z","album":null,"year":null},{"official_position":478,"song":"That's All","artist":"GENESIS","day":"Fri May 22","time_et":"3:57 PM","fetchedAt":"2026-05-22T19:57:47.557Z","startTime":"2026-05-22T19:57:16.013Z","album":"Genesis","year":2007},{"official_position":479,"song":"Learn To Fly","artist":"Foo Fighters","day":"Fri May 22","time_et":"3:45 PM","fetchedAt":"2026-05-22T19:45:57.449Z","startTime":"2026-05-22T19:45:43.693Z","album":"There Is Nothing Left to Lose","year":1999},{"official_position":480,"song":"GIVE IT TO ME","artist":"J. GEILS BAND","day":"Fri May 22","time_et":"3:39 PM","fetchedAt":"2026-05-22T19:39:37.365Z","startTime":"2026-05-22T19:39:23.929Z","album":null,"year":null},{"official_position":481,"song":"OVER MY HEAD","artist":"FLEETWOOD MAC","day":"Fri May 22","time_et":"3:36 PM","fetchedAt":"2026-05-22T19:36:17.360Z","startTime":"2026-05-22T19:35:53.734Z","album":"Fleetwood Mac","year":1975},{"official_position":482,"song":"Dust In The Wind","artist":"Kansas","day":"Fri May 22","time_et":"3:32 PM","fetchedAt":"2026-05-22T19:32:47.316Z","startTime":"2026-05-22T19:32:32.797Z","album":null,"year":1977},{"official_position":483,"song":"Destroyer","artist":"Kinks","day":"Fri May 22","time_et":"3:28 PM","fetchedAt":"2026-05-22T19:28:57.351Z","startTime":"2026-05-22T19:28:42.203Z","album":"Give the People What They Want","year":1981},{"official_position":484,"song":"ONLY THE GOOD DIE YOUNG","artist":"Billy Joel","day":"Fri May 22","time_et":"3:25 PM","fetchedAt":"2026-05-22T19:25:27.254Z","startTime":"2026-05-22T19:25:05.351Z","album":"The Stranger","year":1998},{"official_position":485,"song":"All Apologies","artist":"Nirvana","day":"Fri May 22","time_et":"3:15 PM","fetchedAt":"2026-05-22T19:15:47.153Z","startTime":"2026-05-22T19:15:34.420Z","album":null,"year":null},{"official_position":486,"song":"JET","artist":"PAUL MCCARTNEY [+] WINGS","day":"Fri May 22","time_et":"3:11 PM","fetchedAt":"2026-05-22T19:11:47.089Z","startTime":"2026-05-22T19:11:22.751Z","album":"Clockwise","year":1996},{"official_position":487,"song":"HEART-SHAPED BOX","artist":"NIRVANA","day":"Fri May 22","time_et":"3:06 PM","fetchedAt":"2026-05-22T19:06:57.049Z","startTime":"2026-05-22T19:06:44.851Z","album":null,"year":1993},{"official_position":488,"song":"Flying High Again","artist":"Ozzy Osbourne","day":"Fri May 22","time_et":"3:02 PM","fetchedAt":"2026-05-22T19:02:17.065Z","startTime":"2026-05-22T19:02:05.482Z","album":null,"year":null},{"official_position":489,"song":"GIVE ME LOVE","artist":"GEORGE HARRISON","day":"Fri May 22","time_et":"2:58 PM","fetchedAt":"2026-05-22T18:58:36.965Z","startTime":"2026-05-22T18:58:24.669Z","album":null,"year":null},{"official_position":490,"song":"PRELUDE / ANGRY YOUNG MAN","artist":"Billy Joel","day":"Fri May 22","time_et":"2:46 PM","fetchedAt":"2026-05-22T18:46:36.843Z","startTime":"2026-05-22T18:46:22.440Z","album":"The Stranger","year":2008},{"official_position":491,"song":"These Dreams","artist":"HEART","day":"Fri May 22","time_et":"2:42 PM","fetchedAt":"2026-05-22T18:42:16.799Z","startTime":"2026-05-22T18:42:06.285Z","album":null,"year":1985},{"official_position":492,"song":"Runaway","artist":"BON JOVI","day":"Fri May 22","time_et":"2:38 PM","fetchedAt":"2026-05-22T18:38:36.787Z","startTime":"2026-05-22T18:38:14.839Z","album":"Bon Jovi","year":1998},{"official_position":493,"song":"Feels Like The First Time","artist":"Foreigner","day":"Fri May 22","time_et":"2:34 PM","fetchedAt":"2026-05-22T18:34:56.817Z","startTime":"2026-05-22T18:34:30.794Z","album":"Can\u2019t Slow Down","year":2009},{"official_position":494,"song":"LEVON","artist":"ELTON JOHN","day":"Fri May 22","time_et":"2:29 PM","fetchedAt":"2026-05-22T18:29:36.694Z","startTime":"2026-05-22T18:29:07.633Z","album":"Madman Across the Water","year":1971},{"official_position":495,"song":"You Really Got Me","artist":"Kinks","day":"Fri May 22","time_et":"2:27 PM","fetchedAt":"2026-05-22T18:27:16.671Z","startTime":"2026-05-22T18:26:58.989Z","album":"Adonis In Blue Jeans","year":1994},{"official_position":496,"song":"Turn To Stone","artist":"ELECTRIC LIGHT ORCHESTRA","day":"Fri May 22","time_et":"2:16 PM","fetchedAt":"2026-05-22T18:16:36.618Z","startTime":"2026-05-22T18:16:22.025Z","album":null,"year":null},{"official_position":497,"song":"THE COVER OF THE ROLLING STONE","artist":"Doctor Hook","day":"Fri May 22","time_et":"2:13 PM","fetchedAt":"2026-05-22T18:13:36.545Z","startTime":"2026-05-22T18:13:19.178Z","album":"Better Than I Used to Be","year":2010},{"official_position":498,"song":"I CAN'T TELL YOU WHY","artist":"EAGLES","day":"Fri May 22","time_et":"2:09 PM","fetchedAt":"2026-05-22T18:09:06.539Z","startTime":"2026-05-22T18:08:25.769Z","album":null,"year":null},{"official_position":499,"song":"Day Tripper","artist":"Beatles","day":"Fri May 22","time_et":"2:05 PM","fetchedAt":"2026-05-22T18:05:56.466Z","startTime":"2026-05-22T18:05:39.355Z","album":"Yesterday and Today","year":1966},{"official_position":500,"song":"Jesus Is Just Alright","artist":"Doobie Brothers","day":"Fri May 22","time_et":"Not captured","fetchedAt":"","startTime":"","album":null,"year":1972}];
 
-let songs = [], serverPosition = null, sessionStartTime = null;
-let currentStartMs = null, ws, reconnectTimer, displayTimer;
-let isOperator = false, isPaused = false, consecutiveErrors = 0;
+let filtered = [...SONGS];
+let currentDay = 'all';
+let sortDir = 1;
 
-// ── PIN ──────────────────────────────────────────────────────────────────────
-function checkPin() {
-  const val = document.getElementById('pin-input').value;
-  if (val === OPERATOR_PIN) {
-    isOperator = true;
-    document.getElementById('pin-overlay').classList.add('hidden');
-    document.getElementById('op-controls').classList.add('show');
-    connect();
-    document.getElementById('start-overlay').classList.remove('hidden');
-  } else {
-    document.getElementById('pin-err').style.display = 'block';
-    document.getElementById('pin-input').value = '';
-  }
+function dayClass(day) {
+  if (!day || day === 'Not captured') return '';
+  if (day.includes('Fri')) return 'day-fri';
+  if (day.includes('Sat')) return 'day-sat';
+  if (day.includes('Sun')) return 'day-sun';
+  if (day.includes('Mon')) return 'day-mon';
+  return '';
 }
 
-function skipPin() {
-  document.getElementById('pin-overlay').classList.add('hidden');
-  connect();
+function render() {
+  const tbody = document.getElementById('song-tbody');
+  document.getElementById('results-count').textContent = filtered.length + ' songs';
+  tbody.innerHTML = filtered.map(s => {
+    const posClass = s.official_position <= 10 ? 'top10' : s.official_position <= 50 ? 'top50' : '';
+    const dc = dayClass(s.day);
+    const timeDisplay = (!s.time_et || s.time_et === 'Not captured') 
+      ? '<span class="not-captured">Not captured</span>' 
+      : s.time_et;
+    const dayDisplay = (!s.day || s.day === 'Not captured')
+      ? '<span class="not-captured">—</span>'
+      : `<span class="day-badge ${dc}">${s.day}</span>`;
+    return `<tr>
+      <td class="pos ${posClass}">${s.official_position}</td>
+      <td><div class="song-title">${s.song}</div><div class="song-artist">${s.artist}</div></td>
+      <td>${dayDisplay}</td>
+      <td class="time-cell">${timeDisplay}</td>
+    </tr>`;
+  }).join('');
 }
 
-function showStartOverlay() {
-  document.getElementById('start-overlay').classList.remove('hidden');
-}
-
-// ── Session controls ─────────────────────────────────────────────────────────
-async function startSession() {
-  const pos = parseInt(document.getElementById('start-pos').value) || 500;
-  try {
-    await fetch(`${SERVER_URL}/start?position=${pos}`, { method: 'POST' });
-    sessionStartTime = Date.now();
-    document.getElementById('start-overlay').classList.add('hidden');
-  } catch(e) { console.error('start failed', e); }
-}
-
-async function resumeFromServer() {
-  document.getElementById('start-overlay').classList.add('hidden');
-  sessionStartTime = Date.now();
-  connect();
-}
-
-async function doPause() {
-  try {
-    await fetch(`${SERVER_URL}/pause`, { method: 'POST' });
-  } catch(e) { console.error('pause failed', e); }
-}
-
-async function doResume() {
-  try {
-    await fetch(`${SERVER_URL}/resume`, { method: 'POST' });
-  } catch(e) { console.error('resume failed', e); }
-}
-
-async function doAdjust(delta) {
-  try {
-    await fetch(`${SERVER_URL}/adjust?delta=${delta}`, { method: 'POST' });
-  } catch(e) { console.error('adjust failed', e); }
-}
-
-// ── Clock ────────────────────────────────────────────────────────────────────
-setInterval(() => {
-  document.getElementById('clock').textContent =
-    new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}, 1000);
-
-setInterval(() => {
-  if (!sessionStartTime) return;
-  const e = Math.floor((Date.now()-sessionStartTime)/1000);
-  const h=Math.floor(e/3600), m=Math.floor((e%3600)/60), s=e%60;
-  document.getElementById('session-time').textContent =
-    `Session: ${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
-}, 1000);
-
-setInterval(() => {
-  if (!currentStartMs) return;
-  const e = Math.round((Date.now()-currentStartMs)/1000);
-  document.getElementById('np-elapsed').textContent =
-    `${Math.floor(e/60)}:${String(e%60).padStart(2,'0')}`;
-}, 1000);
-
-// ── VU meter ─────────────────────────────────────────────────────────────────
-const vuRow = document.getElementById('vu-row');
-const vuBars = [];
-for (let i=0;i<36;i++){const b=document.createElement('div');b.className='vu-bar';b.style.height='4px';vuRow.appendChild(b);vuBars.push(b);}
-let vuActive = false;
-setInterval(()=>{
-  if(!vuActive)return;
-  vuBars.forEach((bar,i)=>{
-    const t=i/vuBars.length;
-    const h=Math.max(2,Math.min(24,(1-Math.abs(t-0.42)*1.9)*24+(Math.random()-0.5)*9));
-    bar.style.height=h+'px';
-    bar.style.background=h>20?'#e84040':h>13?'#e8a020':'#3ecf6a';
-    bar.style.opacity=0.5+(h/24)*0.5;
+function filterSongs() {
+  const q = document.getElementById('search').value.toLowerCase();
+  filtered = SONGS.filter(s => {
+    const matchesDay = currentDay === 'all' || (s.day && s.day.includes(currentDay));
+    const matchesSearch = !q || s.song.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q);
+    return matchesDay && matchesSearch;
   });
-},110);
-
-// ── Render helpers ────────────────────────────────────────────────────────────
-function decadeOf(y){return Math.floor(y/10)*10;}
-
-function renderNowPlaying(track) {
-  document.getElementById('fun-facts-card').classList.remove('show');
-  document.getElementById('fun-facts-list').innerHTML = '';
-  currentStartMs = track.startMs;
-  vuActive = true;
-  consecutiveErrors = 0;
-  document.getElementById('comm-banner').classList.remove('show');
-  document.getElementById('np-song').textContent = track.song;
-  document.getElementById('np-artist').textContent = track.artist;
-  document.getElementById('np-album').textContent = track.album || '—';
-  document.getElementById('np-year').textContent = track.year || '—';
-  document.getElementById('np-decade').textContent = track.year ? decadeOf(track.year)+'s' : '—';
-  document.getElementById('np-pos-pill').textContent = track.position != null ? `#${track.position}` : '—';
+  render();
 }
 
-function updatePosition(pos) {
-  serverPosition = pos;
-  if (pos != null) {
-    document.getElementById('pos-number').textContent = pos;
-    document.getElementById('stat-remaining').textContent = Math.max(0, pos-1);
-  }
-}
-
-function renderRecent() {
-  const container = document.getElementById('recent-list');
-  document.getElementById('recent-count').textContent = `${songs.length} song${songs.length!==1?'s':''}`;
-  if (!songs.length) { container.innerHTML = '<div class="empty-state">No songs yet this session</div>'; return; }
-  container.innerHTML = '';
-  [...songs].reverse().forEach((s,i)=>{
-    const item = document.createElement('div');
-    item.className = 'recent-item'+(i===0?' new':'');
-    const t = new Date(s.fetchedAt||Date.now()).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    item.innerHTML = `
-      <div class="recent-pos">${s.position!=null?s.position:'—'}</div>
-      <div><div class="recent-title">${s.song}</div><div class="recent-artist">${s.artist}</div></div>
-      <div class="recent-time">${t}</div>`;
-    container.appendChild(item);
+function setDay(day) {
+  currentDay = day;
+  ['all','fri','sat','sun','mon'].forEach(d => {
+    const btn = document.getElementById('btn-' + d);
+    if (btn) btn.classList.toggle('active', d === day.toLowerCase() || (day === 'all' && d === 'all'));
   });
+  filterSongs();
 }
 
-function renderStats() {
-  const n = songs.length;
-  document.getElementById('r-songs').textContent = n;
-  document.getElementById('stat-played').textContent = n;
-  const unique = new Set(songs.map(s=>s.artist.toLowerCase())).size;
-  document.getElementById('r-artists').textContent = unique;
-  document.getElementById('stat-unique').textContent = unique;
-  const withYears = songs.filter(s=>s.year);
-  if (withYears.length) {
-    const avg = Math.round(withYears.reduce((a,s)=>a+s.year,0)/withYears.length);
-    document.getElementById('r-year').textContent = avg;
-    document.getElementById('stat-avg-year').textContent = avg;
+function sortBy(field) {
+  if (field === 'pos') {
+    filtered.sort((a,b) => a.official_position - b.official_position);
+  } else if (field === 'day') {
+    const dayOrder = {'Fri May 22':1,'Sat May 23':2,'Sun May 24':3,'Mon May 25':4};
+    filtered.sort((a,b) => (dayOrder[a.day]||5) - (dayOrder[b.day]||5) || a.official_position - b.official_position);
   }
-  const counts = {};
-  songs.forEach(s=>{counts[s.artist]=(counts[s.artist]||0)+1;});
-  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  if (sorted.length) {
-    document.getElementById('r-top').textContent = sorted[0][0];
-    document.getElementById('r-top-plays').textContent = `${sorted[0][1]} song${sorted[0][1]!==1?'s':''}`;
+  render();
+}
+
+
+// Countdown to Philly 500 2027 - Friday May 28, 2027 2:00 PM ET
+const TARGET = new Date('2027-05-28T14:00:00-04:00');
+function updateCountdown() {
+  const now = new Date();
+  const diff = TARGET - now;
+  if (diff <= 0) {
+    document.querySelector('.countdown-bar').innerHTML = '<div class="countdown-label" style="color:var(--amber);font-size:14px;letter-spacing:3px;">🎸 THE PHILLY 500 IS LIVE NOW!</div>';
+    return;
   }
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-days').textContent = String(days).padStart(3,'0');
+  document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+  document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
 }
+updateCountdown();
+setInterval(updateCountdown, 1000);
 
-function renderDecades() {
-  const counts = {};
-  songs.filter(s=>s.year).forEach(s=>{const d=decadeOf(s.year)+'s';counts[d]=(counts[d]||0)+1;});
-  const decades = ['1960s','1970s','1980s','1990s','2000s'];
-  const max = Math.max(...Object.values(counts),1);
-  const container = document.getElementById('decade-chart');
-  if (!Object.keys(counts).length){container.innerHTML='<div class="empty-state" style="padding:8px 0">No data yet</div>';return;}
-  container.innerHTML='';
-  decades.forEach(d=>{
-    const c=counts[d]||0;
-    const row=document.createElement('div');
-    row.className='decade-row';
-    row.innerHTML=`<div class="decade-label">${d}</div><div class="decade-track"><div class="decade-fill" style="width:0%" data-target="${Math.round((c/max)*100)}%"></div></div><div class="decade-count">${c}</div>`;
-    container.appendChild(row);
-  });
-  setTimeout(()=>document.querySelectorAll('.decade-fill').forEach(el=>el.style.width=el.dataset.target),50);
-}
+// Compute stats
+const artists = new Set(SONGS.map(s => s.artist.toLowerCase()));
+const years = SONGS.filter(s => s.year).map(s => s.year);
+const avgYear = years.length ? Math.round(years.reduce((a,b)=>a+b,0)/years.length) : '—';
+document.getElementById('stat-artists').textContent = artists.size;
+document.getElementById('stat-avgyear').textContent = avgYear;
 
-function renderArtists() {
-  const counts={};
-  songs.forEach(s=>{counts[s.artist]=(counts[s.artist]||0)+1;});
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
-  const container=document.getElementById('artist-list');
-  document.getElementById('artist-count').textContent=sorted.length?`${sorted.length} artists`:'';
-  if(!sorted.length){container.innerHTML='<div class="empty-state" style="padding:6px 0">No data yet</div>';return;}
-  container.innerHTML='';
-  sorted.forEach(([name,plays],i)=>{
-    const row=document.createElement('div');
-    row.className='artist-row';
-    row.innerHTML=`<div class="artist-rank">${i+1}</div><div class="artist-name">${name}</div><div class="artist-plays">${plays}×</div>`;
-    container.appendChild(row);
-  });
-}
-
-function renderAll(){renderRecent();renderStats();renderDecades();renderArtists();}
-
-function setPaused(paused) {
-  isPaused = paused;
-  document.getElementById('pause-banner').classList.toggle('show', paused);
-  if (isOperator) {
-    document.getElementById('btn-pause').style.display = paused ? 'none' : '';
-    document.getElementById('btn-resume').style.display = paused ? '' : 'none';
-  }
-  if (paused) { vuActive = false; }
-}
-
-// ── WebSocket ─────────────────────────────────────────────────────────────────
-function connect() {
-  const badge = document.getElementById('ws-badge');
-  badge.className='ws-badge connecting'; badge.textContent='CONNECTING';
-  ws = new WebSocket(WS_URL);
-
-  ws.onopen = () => {
-    badge.className='ws-badge ok'; badge.textContent='LIVE ✓';
-    clearTimeout(reconnectTimer);
-  };
-
-  ws.onmessage = (evt) => {
-    const msg = JSON.parse(evt.data);
-
-    if (msg.type === 'init') {
-      if (msg.songs && msg.songs.length > songs.length) songs = msg.songs;
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-      if (msg.current) renderNowPlaying(msg.current);
-      setPaused(msg.sessionPaused || false);
-      if (!sessionStartTime && msg.sessionActive) sessionStartTime = Date.now();
-      renderAll();
-    }
-
-    if (msg.type === 'track') {
-      clearTimeout(displayTimer);
-      displayTimer = setTimeout(() => {
-        const track = msg.track;
-        // Deduplicate
-        if (songs.length && songs[songs.length-1].song.toLowerCase() === track.song.toLowerCase()) return;
-        songs.push(track);
-        if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-        renderNowPlaying(track);
-        renderAll();
-      }, DISPLAY_DELAY_MS);
-    }
-
-    if (msg.type === 'heartbeat') {
-      consecutiveErrors = 0;
-      if (msg.songs && msg.songs.length > songs.length) { songs = msg.songs; renderAll(); }
-      if (msg.paused !== undefined) setPaused(msg.paused);
-    }
-
-    if (msg.type === 'session_start') {
-      songs = msg.songs || [];
-      updatePosition(msg.currentPosition);
-      setPaused(false);
-      sessionStartTime = Date.now();
-      renderAll();
-    }
-
-    if (msg.type === 'session_paused') {
-      setPaused(true);
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-    }
-
-    if (msg.type === 'session_resumed') {
-      setPaused(false);
-      if (msg.songs) songs = msg.songs;
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-      if (msg.current) renderNowPlaying(msg.current);
-      renderAll();
-    }
-
-    if (msg.type === 'position_adjusted') {
-      if (msg.currentPosition != null) updatePosition(msg.currentPosition);
-    }
-
-
-    if (msg.type === 'fun_facts') {
-      const card = document.getElementById('fun-facts-card');
-      const list = document.getElementById('fun-facts-list');
-      list.innerHTML = '';
-      msg.facts.forEach(fact => {
-        const item = document.createElement('div');
-        item.className = 'fun-fact-item';
-        item.textContent = fact;
-        list.appendChild(item);
-      });
-      card.classList.add('show');
-    }
-
-    if (msg.type === 'poll_error') {
-      consecutiveErrors++;
-      if (consecutiveErrors >= 3) {
-        document.getElementById('comm-banner').classList.add('show');
-        vuActive = false;
-      }
-    }
-  };
-
-  ws.onerror = () => { badge.className='ws-badge err'; badge.textContent='NO SERVER'; };
-  ws.onclose = () => {
-    badge.className='ws-badge connecting'; badge.textContent='RECONNECTING';
-    clearTimeout(reconnectTimer);
-    reconnectTimer = setTimeout(connect, 5000);
-  };
-}
+render();
 </script>
 </body>
 </html>
